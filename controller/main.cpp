@@ -48,7 +48,6 @@ void drawFloor()
     }
     glEnd();
     //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-
 }
 
 
@@ -95,22 +94,20 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+
 //------------ Special key event callback ---------------------------------
 // To enable the use of left and right arrow keys to rotate the scene
 void special(int key, int x, int y)
 {
     if(key == GLUT_KEY_LEFT) angle-=5;
     else if(key == GLUT_KEY_RIGHT) angle+=5;
-    else if(key == GLUT_KEY_UP) cam_hgt++;
-    else if(key == GLUT_KEY_DOWN) cam_hgt--;
-    /* Uncomment for submission
+    else if(key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) cam_hgt++;
+    else if(key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) cam_hgt--;
     else if(key == GLUT_KEY_UP) cam_dist--;
     else if(key == GLUT_KEY_DOWN) cam_dist++;
-    */
 
     if(cam_hgt > 200) cam_hgt = 200;
     else if(cam_hgt < 10) cam_hgt = 10;
-
 
     glutPostRedisplay();
 }
@@ -131,26 +128,29 @@ void display()
 
     glRotatef(angle, 0.0, 1.0, 0.0);		//rotate the whole scene
 
-    drawFloor();
+    glPushMatrix();
+        drawFloor();
+    glPopMatrix();
 
     glColor3f(1, 0, 0);
     glPushMatrix();
-    if (!robots[0]->dead) {
-        glPushMatrix();
-        glTranslatef(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
-        glRotatef(90, 0, 1, 0);
-        glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
-        glPushMatrix();
-        glRotatef(-90, 0, -1, 0);
-        float dir[] = {-1, -1, 0};
-        float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
-       // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
-        //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
-        glPopMatrix();
-            robots[0]->drawRobot();
-        glPopMatrix();
-    }
+        if (!robots[0]->dead) {
+            glPushMatrix();
+            glTranslatef(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+            glRotatef(90, 0, 1, 0);
+            glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
+            glPushMatrix();
+            glRotatef(-90, 0, -1, 0);
+            float dir[] = {-1, -1, 0};
+            float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
+           // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
+            //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
+            glPopMatrix();
+                robots[0]->drawRobot();
+            glPopMatrix();
+        }
     glPopMatrix();
+
     glPushMatrix();
         glTranslatef(0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
         glRotatef(180, 0, 1, 0);
@@ -159,9 +159,11 @@ void display()
             robots[1]->drawRobot();
         }
     glPopMatrix();
-        glPushMatrix();
+
+    glPushMatrix();
         castle->drawCastle();
     glPopMatrix();
+
     glPushMatrix();
         cannons[0]->drawCannon();
     glPopMatrix();
@@ -263,11 +265,11 @@ int main(int argc, char** argv)
         cannons[i]->cannonY = 10;
         cannons[i]->cannonZ = cannons[i]->getLength() + castle->getLength() / 4;
         cannons[i]->tilt = 30;
+        cannons[i]->setCannonBall();
     }
 
     glutTimerFunc(100, idleAnim, 0);
     glutTimerFunc(100, patrolAnim, 1);
-    //glutTimerFunc(100, castle->openGateAnim, 10);
 
     spaceships[0] = new Spaceship();
     spaceships[0]->x = 0; spaceships[0]->y = 1.5*spaceships[0]->getRadius(); spaceships[0]->z = 0;
