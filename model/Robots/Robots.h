@@ -20,10 +20,10 @@ public:
     int turns = 0;
 
      struct AnimValues {
-         int idleValue = 0;
-         int patrolValue = 0;
-         int turnAroundValue = 0;
-         int dieValue = 0;
+         int idleValue;
+         int patrolValue;
+         int turnAroundValue;
+         int dieValue;
      };
 
      AnimValues animValues = {0};

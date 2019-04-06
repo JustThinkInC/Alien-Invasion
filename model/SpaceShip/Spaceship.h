@@ -20,9 +20,9 @@ public:
     bool isGrounded();
 
     struct AnimValues {
-        int idleValue = 0;
-        int takeOffValue = 0;
-        int dieValue = 0;
+        int idleValue;
+        int takeOffValue;
+        int dieValue;
     };
 
     AnimValues animValues = {0};
