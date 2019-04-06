@@ -5,7 +5,7 @@ project(Assignment1)
 add_executable(Cannon.out model/Cannon/Cannon.cpp)
 add_executable(Castle.out model/Castle/Castle.cpp)
 add_executable(Robots.out model/Robots/Robots.cpp model/Shapes/Shapes.cpp)
-add_executable(Main.out controller/main.cpp model/Shapes/Shapes.cpp model/Castle/Castle.cpp model/robots/Robots.cpp
+add_executable(Main.out controller/main.cpp model/Shapes/Shapes.cpp model/Castle/Castle.cpp model/Robots/Robots.cpp
         model/Cannon/Cannon.cpp model/SpaceShip/Spaceship.cpp)
 #add_executable(Humanoid.out Humanoid.cpp)
 

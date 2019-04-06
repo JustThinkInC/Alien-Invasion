@@ -19,12 +19,7 @@ public:
     bool smoke = false;
     bool firing = false;
 
-
-    struct AnimValues {
-        int firingValue = 0;
-    };
-
-    AnimValues animValues = {0};
+    int firingValue = 0;
 
     void loadMeshFile(const char* fname);
     void normal(int tindx);

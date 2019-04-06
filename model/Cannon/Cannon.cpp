@@ -147,7 +147,7 @@ void fireCannonAnim(int index) {
     Cannon* cannon = cannons[index];
     cannon->firing = true;
 
-    int* value = &cannon->animValues.firingValue;
+    int* value = &cannon->firingValue;
 
     float g = 9.81;
     float theta = (cannon->tilt * M_PI) / 180;
