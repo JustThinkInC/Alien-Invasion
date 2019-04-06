@@ -9,10 +9,8 @@
 #include "../model/SpaceShip/Spaceship.h"
 #include <iostream>
 #include <fstream>
-#include <climits>
 #include <math.h>
 #include <GL/freeglut.h>
-#include <vector>
 
 #define ROBOT_SCALE 0.1
 

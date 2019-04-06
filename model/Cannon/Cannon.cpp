@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <climits>
-#include <math.h> 
+#include <math.h>
 #include <GL/freeglut.h>
 #include "Cannon.h"
 using namespace std;

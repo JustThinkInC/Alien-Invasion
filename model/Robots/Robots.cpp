@@ -6,15 +6,8 @@
 
 #include "Robots.h"
 #include "../Shapes/Shapes.h"
-#include <iostream>
-#include <fstream>
-#include <climits>
 #include <math.h>
 #include <GL/freeglut.h>
-#include <thread>
-#include <functional>
-#include <map>
-#include <vector>
 
 using namespace std;
 

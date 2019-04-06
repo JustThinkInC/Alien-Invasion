@@ -1,8 +1,5 @@
 #include "Castle.h"
 #include "../Shapes/Shapes.h"
-#include <iostream>
-#include <fstream>
-#include <climits>
 #include <math.h>
 #include <GL/freeglut.h>
 using namespace std;
