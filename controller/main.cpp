@@ -6,7 +6,7 @@
 #include "../model/Robots/Robots.h"
 #include "../model/Castle/Castle.h"
 #include "../model/Cannon/Cannon.h"
-#include "../model/Spaceship/Spaceship.h"
+#include "../model/SpaceShip/Spaceship.h"
 #include <iostream>
 #include <fstream>
 #include <climits>
