@@ -271,12 +271,9 @@ void drawPyramid(float baseLength) {
  * @param length
  */
 void drawCube(float length) {
-    float x, y, z;
     float halfLength = length * 0.5;
     glBegin(GL_QUADS);
-    //for(int faces; faces <= 6; faces++) {
 
-    // for(int vertex; vertex <= 4; vertex++) {
     glVertex3f(-halfLength, halfLength, 0);
     glVertex3f(halfLength, halfLength, 0);
     glVertex3f(halfLength, -halfLength, 0);
