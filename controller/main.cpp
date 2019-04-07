@@ -7,6 +7,7 @@
 #include "../model/Castle/Castle.h"
 #include "../model/Cannon/Cannon.h"
 #include "../model/SpaceShip/Spaceship.h"
+#include "../model/Skybox/Skybox.h"
 #include <iostream>
 #include <fstream>
 #include <math.h>
@@ -18,10 +19,8 @@ float angle = 0.0;  //Rotation angle for viewing
 float cam_hgt = 10;
 float cam_dist = 200;
 
-//std::vector<Robots> robots;
-//Robots* robots[10];
-//Robots* robots[2] = {new Robots(), new Robots()};
 Castle* castle = new Castle(150, 50);
+Skybox* skybox = new Skybox();
 
 void drawFloor()
 {
@@ -107,6 +106,8 @@ void special(int key, int x, int y)
     if(cam_hgt > 200) cam_hgt = 200;
     else if(cam_hgt < 10) cam_hgt = 10;
 
+    if (cam_dist < 50) cam_dist = 50;
+    else if (cam_dist > 500) cam_dist = 500;
     glutPostRedisplay();
 }
 
@@ -117,18 +118,22 @@ void display()
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    //GL_LINE = Wireframe;   GL_FILL = Solid
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //gluLookAt(0, cam_hgt, 300, 0, 0, 0, 0, 1, 0);
     gluLookAt(0, cam_hgt, cam_dist, 0, 0, 0, 0, 1, 0);
+
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-    // gluLookAt (-80, cam_hgt, 180, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+
+//    float xlook = -100.0*sin(angle*M_PI/180);
+//    float zlook = -100.0*cos(angle*M_PI/180);
+//    gluLookAt (0, 500, 0, xlook, 500, zlook, 0, 1, 0);
 
     glRotatef(angle, 0.0, 1.0, 0.0);		//rotate the whole scene
 
-    glPushMatrix();
-        drawFloor();
-    glPopMatrix();
+    //glPushMatrix();
+//        drawFloor();
+  //  glPopMatrix();
 
     glColor3f(1, 0, 0);
     glPushMatrix();
@@ -170,60 +175,42 @@ void display()
    //     spaceships[0]->drawSpaceship();
     glPopMatrix();
 
+    glPushMatrix();
+        skybox->drawSkybox();
+    glPopMatrix();
+
     glutSwapBuffers();
+    glFlush();
 }
 
 
 //------- Initialize OpenGL parameters -----------------------------------
 void initialize()
 {
-    //glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
-
-   // glEnable(GL_LIGHTING);					//Enable OpenGL states
-    //glEnable(GL_LIGHT0);
-    //glEnable(GL_LIGHT1);
-
-//
-//    float grey[4] = {0.2, 0.2, 0.2, 1.0};
-//    float white[4]  = {1.0, 1.0, 1.0, 1.0};
-//    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
-//    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
-//    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-//
-//    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 10.0);
-//    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT,1);
-//
-//    glLightfv(GL_LIGHT0, GL_AMBIENT, grey);
-//    glLightfv(GL_LIGHT0, GL_DIFFUSE, grey);
-//    glLightfv(GL_LIGHT0, GL_SPECULAR, grey);
-//
-
-  //  glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-//    glEnable(GL_COLOR_MATERIAL);
-//    glEnable(GL_DEPTH_TEST);
-//    glEnable(GL_NORMALIZE);
-//    glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glClearColor(0, 0, 0, 0);
-
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
 
     glEnable(GL_LIGHTING);					//Enable OpenGL states
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
+
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    float grey[4] = {0.2, 0.2, 0.2, 0.2};
+    float white[4]  = {0.5, 0.5, 0.5, 0.5};
+    glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
-    gluPerspective(90, 1.78, 5, 1000);  //The camera view volume FOR TEST
-    //gluPerspective(60., 1.0, 10.0, 1000.0);   //Perspective projection FOR PROD
-
+    gluPerspective(90, 1, 5, 5000);
+    //gluPerspective(80.0, 1.0, 100.0, 5000.0);   //Perspective projection from Skybox lab
 }
 
 
@@ -241,6 +228,8 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
+
+    skybox->loadTextures();
 
     for (int i=0; i < 2; i++) {
         robots[i] = new Robots();
