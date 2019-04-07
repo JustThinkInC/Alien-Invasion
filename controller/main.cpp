@@ -243,6 +243,7 @@ int main(int argc, char** argv)
         castle->walls[i]->color[2] = 0.0f;
         castle->walls[i]->color[3] = 1.0f;
     }
+    castle->loadTex();
 
 
     for (int i = 0; i < 4; i++) {
