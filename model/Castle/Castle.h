@@ -7,12 +7,15 @@
  */
 #ifndef CASTLE_H
 #define CASTLE_H
+#include <GL/freeglut.h>
 
 class Castle {
 private:
     int length;
     int height;
     int columns;
+    GLuint doorTexId;
+    void drawGate(float length);
 
 public:
     Castle(int length, int height);
@@ -36,6 +39,8 @@ public:
     float yLevel; //Distance above ground
     static struct Wall* walls[5];
     static struct Gate gate;
+
+    void loadTex();
 
     void setColumns(int columns);
 

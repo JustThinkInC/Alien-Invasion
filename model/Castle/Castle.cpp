@@ -1,5 +1,6 @@
 #include "Castle.h"
 #include "../Shapes/Shapes.h"
+#include "../../controller/loadTGA.h"
 #include <math.h>
 #include <GL/freeglut.h>
 using namespace std;
@@ -24,6 +25,34 @@ Castle::Castle(int length, int height){
     xFront = 5;
     yFront = yLevel;
     zFront = 0.5 * length;
+}
+
+
+void Castle::loadTex() {
+    glGenTextures(1, &doorTexId); 				// Create a Texture object
+    glBindTexture(GL_TEXTURE_2D, doorTexId);		//Use this texture
+    loadTGA("../assets/gate.tga");
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+}
+
+
+void Castle::drawGate(float length) {
+    float halfLength = length * 0.5;
+    glDisable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, doorTexId);
+    glBegin(GL_QUADS);
+        glVertex3f(-halfLength, halfLength, length);    glTexCoord2f(1, 0);
+        glVertex3f(halfLength, halfLength, length);     glTexCoord2f(1, 1);
+        glVertex3f(halfLength, -halfLength, length);    glTexCoord2f(0, 1);
+        glVertex3f(-halfLength, -halfLength, length);   glTexCoord2f(0, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
 }
 
 
@@ -70,13 +99,14 @@ void Castle::drawCastle() {
 
     // Gate
     glPushMatrix();
-        glTranslatef(xFront, 0.25 * yLevel, 0.5 * length + 7);
-        glRotatef(gate.angle, 1, 0, 0);     // Upwards tilt
-        glTranslatef(xFront, 0.25 * yLevel, xFront*1.20);
+        glTranslatef(xFront/2, 12, 0.5 * length + 7);
+        glRotatef(gate.angle, 1, 0, 0);
+        glTranslatef(xFront/2, 12, (0.5 * length + 7)/10);//12);
         glColor4f(gate.color[0], gate.color[1], gate.color[2], gate.color[3]);
-        glScalef(1, 1, 5 / length);
-        drawCube(0.75 * height);
+        glScalef(0.75, 1, 5 / length);
+        drawGate(height);
     glPopMatrix();
+
 }
 
 
