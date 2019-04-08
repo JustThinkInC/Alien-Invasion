@@ -15,9 +15,10 @@
 
 #define ROBOT_SCALE 0.1
 
-float angle = 0.0;  //Rotation angle for viewing
-float cam_hgt = 10;
-float cam_dist = 200;
+static float angle = 0.0;  //Rotation angle for viewing
+static float cam_hgt = 10;
+static float cam_dist = 200;
+static float eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
 
 Castle* castle = new Castle(150, 50);
 Skybox* skybox = new Skybox();
@@ -48,70 +49,6 @@ void drawFloor()
 }
 
 
-/**
- * The keyboard function event
- * @param key Key pressed
- * @param x Mouse X position
- * @param y Mouse Y position
- */
-void keyboard(unsigned char key, int x, int y) {
-    switch (key) {
-        case 'p':
-            if (!robots[0]->moving) {
-                glutTimerFunc(100, patrolAnim, 0);
-
-            }
-            if (!robots[1]->moving) {
-                glutTimerFunc(100, patrolAnim, 1);
-            }
-            break;
-        case 'd':
-            if (!robots[0]->dying && !robots[0]->dead) {
-                glutTimerFunc(100, dieAnim, 0);
-            }
-//            if(!robots[1]->dying && !robots[0]->dead) {
-//                glutTimerFunc(100, dieAnim, 1);
-//            }
-            break;
-        case 'c':
-            if (!cannons[0]->firing) {
-                glutTimerFunc(100, fireCannonAnim, 0);
-            } else {
-                cout << "OH OH" << endl;
-            }
-            break;
-
-        case 'u':
-            if (castle->gate.closed && !castle->gate.opening) {
-                glutTimerFunc(100, castle->openGateAnim, castle->gate.angle);
-            } else if (castle->gate.open && !castle->gate.closing) {
-                glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
-            }
-    }
-    glutPostRedisplay();
-}
-
-
-//------------ Special key event callback ---------------------------------
-// To enable the use of left and right arrow keys to rotate the scene
-void special(int key, int x, int y)
-{
-    if(key == GLUT_KEY_LEFT) angle-=5;
-    else if(key == GLUT_KEY_RIGHT) angle+=5;
-    else if(key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) cam_hgt++;
-    else if(key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) cam_hgt--;
-    else if(key == GLUT_KEY_UP) cam_dist--;
-    else if(key == GLUT_KEY_DOWN) cam_dist++;
-
-    if(cam_hgt > 200) cam_hgt = 200;
-    else if(cam_hgt < 10) cam_hgt = 10;
-
-    if (cam_dist < 50) cam_dist = 50;
-    else if (cam_dist > 500) cam_dist = 500;
-    glutPostRedisplay();
-}
-
-
 void display()
 {
     float lpos[4] = {100., 100., 100., 1.0};  //light's position
@@ -121,13 +58,10 @@ void display()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0, cam_hgt, cam_dist, 0, 0, 0, 0, 1, 0);
+    gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
-//    float xlook = -100.0*sin(angle*M_PI/180);
-//    float zlook = -100.0*cos(angle*M_PI/180);
-//    gluLookAt (0, 500, 0, xlook, 500, zlook, 0, 1, 0);
 
     glRotatef(angle, 0.0, 1.0, 0.0);		//rotate the whole scene
 
@@ -184,6 +118,93 @@ void display()
 }
 
 
+/**
+ * The keyboard function event
+ * @param key Key pressed
+ * @param x Mouse X position
+ * @param y Mouse Y position
+ */
+void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+        case 'p':
+            if (!robots[0]->moving) {
+                glutTimerFunc(100, patrolAnim, 0);
+
+            }
+            if (!robots[1]->moving) {
+                glutTimerFunc(100, patrolAnim, 1);
+            }
+            break;
+        case 'd':
+            if (!robots[0]->dying && !robots[0]->dead) {
+                glutTimerFunc(100, dieAnim, 0);
+            }
+//            if(!robots[1]->dying && !robots[0]->dead) {
+//                glutTimerFunc(100, dieAnim, 1);
+//            }
+            break;
+        case 'c':
+            if (!cannons[0]->firing) {
+                glutTimerFunc(100, fireCannonAnim, 0);
+            } else {
+                cout << "OH OH" << endl;
+            }
+            break;
+
+        case 'u':
+            if (castle->gate.closed && !castle->gate.opening) {
+                glutTimerFunc(100, castle->openGateAnim, castle->gate.angle);
+            } else if (castle->gate.open && !castle->gate.closing) {
+                glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
+            }
+    }
+    glutPostRedisplay();
+}
+
+
+//------------ Special key event callback ---------------------------------
+// To enable the use of left and right arrow keys to rotate the scene
+void special(int key, int x, int y)
+{
+    float radAngle = angle * M_PI / 180;
+
+    if(key == GLUT_KEY_LEFT) {
+        angle-=5;
+        radAngle = angle * M_PI/180;
+    }
+    else if(key == GLUT_KEY_RIGHT) {
+        angle+=5;
+        radAngle = angle * M_PI / 180;
+    }
+    else if(key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
+        eyeY += 0.1 * cos(radAngle);
+    }
+    else if(key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+        eyeY -= 0.1 * cos(radAngle);
+    }
+    else if(key == GLUT_KEY_UP) {
+        eyeX += 0.5 * sin(radAngle);
+        eyeZ -= 0.5 * cos(radAngle);
+    }
+    else if(key == GLUT_KEY_DOWN) {
+        eyeX -= 0.5 * sin(radAngle);
+        eyeZ += 0.5 * cos(radAngle);
+    }
+
+    if(cam_hgt > 200) cam_hgt = 200;
+    else if(cam_hgt < 10) cam_hgt = 10;
+
+    if (cam_dist < 50) cam_dist = 50;
+    else if (cam_dist > 500) cam_dist = 500;
+
+    lookX = eyeX + 1000*sin(radAngle);
+    lookZ = eyeZ - 1000*cos(radAngle);
+
+
+    glutPostRedisplay();
+}
+
+
 //------- Initialize OpenGL parameters -----------------------------------
 void initialize()
 {
@@ -211,6 +232,9 @@ void initialize()
     glLoadIdentity();
     gluPerspective(90, 1, 5, 5000);
     //gluPerspective(80.0, 1.0, 100.0, 5000.0);   //Perspective projection from Skybox lab
+
+    eyeZ = castle->getLength() * 2;
+    eyeY = 5.5;//cos(angle*M_PI/180);
 }
 
 
