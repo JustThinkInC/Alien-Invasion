@@ -34,7 +34,6 @@ void Castle::loadTex() {
     loadTGA("../assets/gate.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 }
 
 
@@ -96,17 +95,14 @@ void Castle::drawCastle() {
         drawCube(length);
     glPopMatrix();
 
-
     // Gate
     glPushMatrix();
         glTranslatef(xFront/2, 12, 0.5 * length + 7);
         glRotatef(gate.angle, 1, 0, 0);
         glTranslatef(xFront/2, 12, (0.5 * length + 7)/10);//12);
-        glColor4f(gate.color[0], gate.color[1], gate.color[2], gate.color[3]);
         glScalef(0.75, 1, 5 / length);
         drawGate(height);
     glPopMatrix();
-
 }
 
 
