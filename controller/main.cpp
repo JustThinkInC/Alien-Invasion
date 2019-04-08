@@ -22,6 +22,7 @@ static float eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
 
 Castle* castle = new Castle(150, 50);
 Skybox* skybox = new Skybox();
+Spaceship* spaceship = new Spaceship(30);
 
 void drawFloor()
 {
@@ -73,16 +74,16 @@ void display()
     glPushMatrix();
         if (!robots[0]->dead) {
             glPushMatrix();
-            glTranslatef(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
-            glRotatef(90, 0, 1, 0);
-            glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
-            glPushMatrix();
-            glRotatef(-90, 0, -1, 0);
-            float dir[] = {-1, -1, 0};
-            float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
-           // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
-            //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
-            glPopMatrix();
+                glTranslatef(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+                glRotatef(90, 0, 1, 0);
+                glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
+                glPushMatrix();
+                    glRotatef(-90, 0, -1, 0);
+                    float dir[] = {-1, -1, 0};
+                    float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
+                    // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
+                    //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
+                glPopMatrix();
                 robots[0]->drawRobot();
             glPopMatrix();
         }
@@ -98,7 +99,7 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-        castle->drawCastle();
+        //castle->drawCastle();
     glPopMatrix();
 
     glPushMatrix();
@@ -106,7 +107,7 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-   //     spaceships[0]->drawSpaceship();
+        spaceship->drawSpaceship();
     glPopMatrix();
 
     glPushMatrix();
@@ -157,6 +158,10 @@ void keyboard(unsigned char key, int x, int y) {
             } else if (castle->gate.open && !castle->gate.closing) {
                 glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
             }
+        case 's':
+            if (spaceship->isGrounded()) {
+                glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
+            }
     }
     glutPostRedisplay();
 }
@@ -177,18 +182,18 @@ void special(int key, int x, int y)
         radAngle = angle * M_PI / 180;
     }
     else if(key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
-        eyeY += 0.1 * cos(radAngle);
+        eyeY += 1 * cos(radAngle);
     }
     else if(key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-        eyeY -= 0.1 * cos(radAngle);
+        eyeY -= 1 * cos(radAngle);
     }
     else if(key == GLUT_KEY_UP) {
-        eyeX += 0.5 * sin(radAngle);
-        eyeZ -= 0.5 * cos(radAngle);
+        eyeX += 1 * sin(radAngle); //Change to 0.5 for PROD
+        eyeZ -= 1 * cos(radAngle);
     }
     else if(key == GLUT_KEY_DOWN) {
-        eyeX -= 0.5 * sin(radAngle);
-        eyeZ += 0.5 * cos(radAngle);
+        eyeX -= 1 * sin(radAngle);
+        eyeZ += 1 * cos(radAngle);
     }
 
     if(cam_hgt > 200) cam_hgt = 200;
@@ -196,6 +201,10 @@ void special(int key, int x, int y)
 
     if (cam_dist < 50) cam_dist = 50;
     else if (cam_dist > 500) cam_dist = 500;
+
+    if (eyeY <= 5.5) {
+        eyeY = 5.5;
+    }
 
     lookX = eyeX + 1000*sin(radAngle);
     lookZ = eyeZ - 1000*cos(radAngle);
@@ -279,13 +288,11 @@ int main(int argc, char** argv)
         cannons[i]->tilt = 30;
         cannons[i]->setCannonBall();
     }
+    spaceship->loadTex();
 
     glutTimerFunc(100, idleAnim, 0);
     glutTimerFunc(100, patrolAnim, 1);
 
-    spaceships[0] = new Spaceship();
-    spaceships[0]->x = 0; spaceships[0]->y = 1.5*spaceships[0]->getRadius(); spaceships[0]->z = 0;
-    spaceships[0]->setRadius(20);
 
     glutMainLoop();
     return 0;
