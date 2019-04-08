@@ -16,13 +16,11 @@
 #define ROBOT_SCALE 0.1
 
 static float angle = 0.0;  //Rotation angle for viewing
-static float cam_hgt = 10;
-static float cam_dist = 200;
 static float eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
 
-Castle* castle = new Castle(150, 50);
-Skybox* skybox = new Skybox();
-Spaceship* spaceship = new Spaceship(30);
+Castle* castle;
+Skybox* skybox;
+Spaceship* spaceship;
 
 void drawFloor()
 {
@@ -137,32 +135,32 @@ void keyboard(unsigned char key, int x, int y) {
             }
             break;
         case 'd':
+            // Remove 1 robot at a time
             if (!robots[0]->dying && !robots[0]->dead) {
                 glutTimerFunc(100, dieAnim, 0);
             }
-//            if(!robots[1]->dying && !robots[0]->dead) {
-//                glutTimerFunc(100, dieAnim, 1);
-//            }
+            else if(!robots[1]->dying && !robots[0]->dead) {
+                glutTimerFunc(100, dieAnim, 1);
+            }
             break;
         case 'c':
             if (!cannons[0]->firing) {
                 glutTimerFunc(100, fireCannonAnim, 0);
-            } else {
-                cout << "OH OH" << endl;
             }
             break;
-
         case 'u':
             if (castle->gate.closed && !castle->gate.opening) {
                 glutTimerFunc(100, castle->openGateAnim, castle->gate.angle);
             } else if (castle->gate.open && !castle->gate.closing) {
                 glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
             }
+            break;
         case 's':
             if (spaceship->isGrounded()) {
                 glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
             }
     }
+
     glutPostRedisplay();
 }
 
@@ -196,11 +194,6 @@ void special(int key, int x, int y)
         eyeZ += 1 * cos(radAngle);
     }
 
-    if(cam_hgt > 200) cam_hgt = 200;
-    else if(cam_hgt < 10) cam_hgt = 10;
-
-    if (cam_dist < 50) cam_dist = 50;
-    else if (cam_dist > 500) cam_dist = 500;
 
     if (eyeY <= 5.5) {
         eyeY = 5.5;
@@ -213,6 +206,41 @@ void special(int key, int x, int y)
     glutPostRedisplay();
 }
 
+
+void initObjects() {
+    skybox = new Skybox();
+    skybox->loadTextures();
+
+    castle = new Castle(150, 50);
+    castle->yLevel = castle->getHeight() / 2;
+    castle->loadTex();
+
+    for(int i=0; i < 4;i++) {
+        castle->walls[i]->color[0] = 1.0f;
+        castle->walls[i]->color[1] = 0.65f;
+        castle->walls[i]->color[2] = 0.0f;
+        castle->walls[i]->color[3] = 1.0f;
+    }
+
+
+    for (int i=0; i < 2; i++) {
+        robots[i] = new Robots();
+        robots[i]->patrolDistance = castle->getLength();
+    }
+
+    for (int i = 0; i < 4; i++) {
+        cannons[i] = new Cannon();
+        cannons[i]->loadMeshFile("../assets/Cannon.off");
+        cannons[i]->cannonX = 0;
+        cannons[i]->cannonY = 10;
+        cannons[i]->cannonZ = cannons[i]->getLength() + castle->getLength() / 4;
+        cannons[i]->tilt = 30;
+        cannons[i]->setCannonBall();
+    }
+
+    spaceship = new Spaceship(30);
+    spaceship->loadTex();
+}
 
 //------- Initialize OpenGL parameters -----------------------------------
 void initialize()
@@ -242,8 +270,10 @@ void initialize()
     gluPerspective(90, 1, 5, 5000);
     //gluPerspective(80.0, 1.0, 100.0, 5000.0);   //Perspective projection from Skybox lab
 
+    initObjects();
+
     eyeZ = castle->getLength() * 2;
-    eyeY = 5.5;//cos(angle*M_PI/180);
+    eyeY = 5.5;
 }
 
 
@@ -262,37 +292,7 @@ int main(int argc, char** argv)
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
 
-    skybox->loadTextures();
-
-    for (int i=0; i < 2; i++) {
-        robots[i] = new Robots();
-        robots[i]->patrolDistance = castle->getLength();
-    }
-
-    castle->yLevel = castle->getHeight() / 2;
-    for(int i=0; i < 4;i++) {
-        castle->walls[i]->color[0] = 1.0f;
-        castle->walls[i]->color[1] = 0.65f;
-        castle->walls[i]->color[2] = 0.0f;
-        castle->walls[i]->color[3] = 1.0f;
-    }
-    castle->loadTex();
-
-
-    for (int i = 0; i < 4; i++) {
-        cannons[i] = new Cannon();
-        cannons[i]->loadMeshFile("../assets/Cannon.off");
-        cannons[i]->cannonX = 0;
-        cannons[i]->cannonY = 10;
-        cannons[i]->cannonZ = cannons[i]->getLength() + castle->getLength() / 4;
-        cannons[i]->tilt = 30;
-        cannons[i]->setCannonBall();
-    }
-    spaceship->loadTex();
-
-    glutTimerFunc(100, idleAnim, 0);
-    glutTimerFunc(100, patrolAnim, 1);
-
+    display();
 
     glutMainLoop();
     return 0;
