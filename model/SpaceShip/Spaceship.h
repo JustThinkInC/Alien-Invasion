@@ -6,16 +6,23 @@
 #define SPACESHIP_H
 #define TAKE_OFF_TIME 10
 
+#include <GL/freeglut.h>
+
 class Spaceship {
 
-public:
-    float x, y, z; // Coordinates
+private:
+    int health = 100, radius = 50;
+    void checkAlive();
+    GLuint wingTex;
 
+public:
     int getRadius();
     int getHealth();
     void setRadius(int radius);
     void takeDamage(); //Default damage amount
     void takeDamage(int damage);
+    void loadTex();
+    void drawWingTips();
     void drawSpaceship();
     bool isGrounded();
 
@@ -23,21 +30,18 @@ public:
         int idleValue;
         int takeOffValue;
         int dieValue;
+        bool grounded;
+        float x, y, z;
     };
 
-    AnimValues animValues = {0};
+    static struct AnimValues animValues;
 
+    static void takeOffAnim(int index);
+    static void destroyAnim(int index);
+
+    Spaceship(int radius);
     Spaceship() {};
-
-private:
-    int health = 100, radius = 50;
-    bool grounded = true;
-    void checkAlive();
 };
 
-extern Spaceship* spaceships[1];
-
-void takeOffAnim(int index);
-void destroyAnim(int index);
 
 #endif //ASSIGNMENT1_SPACESHIP_H
