@@ -4,7 +4,7 @@
 
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
-#define TAKE_OFF_TIME 10
+#define TAKE_OFF_TIME 100
 
 #include <GL/freeglut.h>
 

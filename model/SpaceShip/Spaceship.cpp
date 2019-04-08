@@ -84,58 +84,58 @@ void Spaceship::drawWingTips() {
     glBindTexture(GL_TEXTURE_2D, wingTex);
     glBegin(GL_TRIANGLES);
         // Right wing tip
-        glTexCoord2f(1,  0);    glVertex3f(radius, 10, 0);
-        glTexCoord2f(1, 1);     glVertex3f(radius, 30, 0);
-        glTexCoord2f(0, 1);     glVertex3f(radius+20, 10, 0);
+        glTexCoord2f(1,  0);    glVertex3f(radius, 10+animValues.y, 0);
+        glTexCoord2f(1, 1);     glVertex3f(radius, 30+animValues.y, 0);
+        glTexCoord2f(0, 1);     glVertex3f(radius+20, 10+animValues.y, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Left wing tip
-        glTexCoord2f(1,  0);    glVertex3f(-radius, 10, 0);
-        glTexCoord2f(1, 1);     glVertex3f(-radius, 30, 0);
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20), 10, 0);
+        glTexCoord2f(1,  0);    glVertex3f(-radius, 10+animValues.y, 0);
+        glTexCoord2f(1, 1);     glVertex3f(-radius, 30+animValues.y, 0);
+        glTexCoord2f(0, 1);     glVertex3f(-(radius+20), 10+animValues.y, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Front wing tip
-        glTexCoord2f(1, 0);    glVertex3f(0, 10,  radius);
-        glTexCoord2f(1, 1);    glVertex3f(0, 30,  radius);
+        glTexCoord2f(1, 0);    glVertex3f(0, 10+animValues.y,  radius);
+        glTexCoord2f(1, 1);    glVertex3f(0, 30+animValues.y,  radius);
         glTexCoord2f(0, 1);    glVertex3f(0, 10, radius+20);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         //Rear wing tip
-        glTexCoord2f(1, 0);     glVertex3f(0, 10, -radius);
-        glTexCoord2f(1, 1);     glVertex3f(0, 30, -radius);
-        glTexCoord2f(0, 1);     glVertex3f(0, 10, -(radius+20));
+        glTexCoord2f(1, 0);     glVertex3f(0, 10+animValues.y, -radius);
+        glTexCoord2f(1, 1);     glVertex3f(0, 30+animValues.y, -radius);
+        glTexCoord2f(0, 1);     glVertex3f(0, 10+animValues.y, -(radius+20));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between right and front (SE)
-        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10, radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30, radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10, (radius+20)*sin(45*M_PI/180));
+        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
+        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
+        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between left and front (SW)
-        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10, radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30, radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10, (radius+20)*sin(45*M_PI/180));
+        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
+        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
+        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between right and back (NE)
-        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10, -radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30, -radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10, -(radius+20)*sin(45*M_PI/180));
+        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
+        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
+        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between left and back (NW)
-        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10, -radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30, -radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10, -(radius+20)*sin(45*M_PI/180));
+        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
+        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
+        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glTexCoord2f(0, 0);
@@ -149,14 +149,14 @@ void Spaceship::drawSpaceship() {
 
     //Body
     glPushMatrix();
-        glTranslatef(0, 10, 0);
+        glTranslatef(0, 10+animValues.y, 0);
         glColor4f(0.96, 0.79, 0.65, 1);
         drawCylinder(radius, 3*radius);
     glPopMatrix();
 
     // Top part
     glPushMatrix();
-        glTranslatef(0, radius*3+10, 0);
+        glTranslatef(0, radius*3+10+animValues.y, 0);
         glColor4f(0.96, 0.79, 0.65, 1);
         drawCone(radius, radius);
     glPopMatrix();
@@ -175,11 +175,11 @@ void Spaceship::drawSpaceship() {
             zDir = -1;
         }
         glPushMatrix();
-            glTranslatef(xDir * 0.4*radius, 0, zDir * 0.4*radius);
+            glTranslatef(xDir * 0.4*radius, 0+animValues.y, zDir * 0.4*radius);
             drawCylinder(0.3*radius, 20);
         glPopMatrix();
         glPushMatrix();
-            glTranslatef(xDir * 0.4*radius, 0, -zDir * 0.4*radius);
+            glTranslatef(xDir * 0.4*radius, 0+animValues.y, -zDir * 0.4*radius);
             drawCylinder(0.3*radius, 20);
         glPopMatrix();
     }
@@ -195,11 +195,8 @@ void Spaceship::takeOffAnim(int value) {
     if (value < TAKE_OFF_TIME) {
         animValues.grounded = false;
         animValues.y += 10;
-        animValues.takeOffValue ++;//* value = * value + 1;
+        animValues.takeOffValue ++;
         glutPostRedisplay();
         glutTimerFunc(100, takeOffAnim, animValues.takeOffValue);
-    } else {
-        animValues.takeOffValue = 0;
-        glutPostRedisplay();
     }
 }
