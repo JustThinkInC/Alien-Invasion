@@ -4,7 +4,7 @@
 
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
-#define TAKE_OFF_TIME 10
+#define TAKE_OFF_TIME 100
 #define FLAMES 50    // Fire particles per booster
 
 #include <GL/freeglut.h>
@@ -24,6 +24,7 @@ public:
     void takeDamage(); //Default damage amount
     void takeDamage(int damage);
     void loadTex();
+    void drawBoosters();
     void drawFlameParticle();
     void drawFlames();
     void drawWingTips();

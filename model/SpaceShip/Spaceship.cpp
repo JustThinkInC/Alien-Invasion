@@ -110,6 +110,29 @@ void Spaceship::drawFlameParticle() {
 }
 
 
+void Spaceship::drawBoosters() {
+    //Boosters
+    float xDir = 1;
+    float zDir = 1;
+    for(int i=0; i < 2; i++) {
+        if (i % 2 == 1) {
+            xDir = -1;
+            zDir = -1;
+        }
+
+        glPushMatrix();
+            glTranslatef(xDir * boosterRadius, animValues.y, zDir * boosterRadius);
+            drawCylinder(0.3 * radius, 20);
+        glPopMatrix();
+
+        glPushMatrix();
+            glTranslatef(xDir * boosterRadius, animValues.y, -zDir * boosterRadius);
+            drawCylinder(0.3 * radius, 20);
+        glPopMatrix();
+    }
+}
+
+
 /**
  * Draw a flame per booster
  * Each flame has 50 particles
@@ -251,24 +274,12 @@ void Spaceship::drawSpaceship() {
         drawWingTips();
     glPopMatrix();
 
-    //Boosters
-    float xDir = 1;
-    float zDir = 1;
-    for(int i=0; i < 2; i++) {
-        if (i % 2 == 1){
-            xDir = -1;
-            zDir = -1;
-        }
-        glPushMatrix();
-            glTranslatef(xDir * boosterRadius, 0+animValues.y, zDir * boosterRadius);
-            drawCylinder(0.3*radius, 20);
-        glPopMatrix();
-        glPushMatrix();
-            glTranslatef(xDir * boosterRadius, 0+animValues.y, -zDir * boosterRadius);
-            drawCylinder(0.3*radius, 20);
-        glPopMatrix();
-    }
+    // Boosters
+    glPushMatrix();
+        drawBoosters();
+    glPopMatrix();
 
+    // Render the flames
     glPushMatrix();
         drawFlames();
     glPopMatrix();
