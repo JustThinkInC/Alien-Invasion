@@ -4,7 +4,8 @@
 
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
-#define TAKE_OFF_TIME 100
+#define TAKE_OFF_TIME 10
+#define FLAMES 50    // Fire particles per booster
 
 #include <GL/freeglut.h>
 
@@ -12,8 +13,9 @@ class Spaceship {
 
 private:
     int health = 100, radius = 50;
+    float boosterRadius = 20;
     void checkAlive();
-    GLuint wingTex;
+    GLuint texIds[2];
 
 public:
     int getRadius();
@@ -22,6 +24,8 @@ public:
     void takeDamage(); //Default damage amount
     void takeDamage(int damage);
     void loadTex();
+    void drawFlameParticle();
+    void drawFlames();
     void drawWingTips();
     void drawSpaceship();
     bool isGrounded();
@@ -30,14 +34,15 @@ public:
         int idleValue;
         int takeOffValue;
         int dieValue;
+        int boosterValue;
         bool grounded;
         float x, y, z;
     };
 
     static struct AnimValues animValues;
 
-    static void takeOffAnim(int index);
-    static void destroyAnim(int index);
+    static void takeOffAnim(int value);
+    static void destroyAnim(int value);
 
     Spaceship(int radius);
     Spaceship() {};
