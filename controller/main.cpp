@@ -8,6 +8,7 @@
 #include "../model/Cannon/Cannon.h"
 #include "../model/SpaceShip/Spaceship.h"
 #include "../model/Skybox/Skybox.h"
+#include "../model/Tank/Tank.h"
 #include <iostream>
 #include <fstream>
 #include <math.h>
@@ -16,11 +17,14 @@
 #define ROBOT_SCALE 0.1
 
 static float angle = 0.0;  //Rotation angle for viewing
-static float eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
+static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
+static bool spaceView = false;
 
 Castle* castle;
 Skybox* skybox;
 Spaceship* spaceship;
+
+Tank* tank = new Tank();
 
 void drawFloor()
 {
@@ -37,10 +41,10 @@ void drawFloor()
     {
         for(int j = -500;  j < 500; j++)
         {
-            glVertex3f(i, 0, j);
-            glVertex3f(i, 0, j+1);
-            glVertex3f(i+1, 0, j+1);
-            glVertex3f(i+1, 0, j);
+            glVertex3f(i, -10, j);
+            glVertex3f(i, -10, j+1);
+            glVertex3f(i+1, -10, j+1);
+            glVertex3f(i+1, -10, j);
         }
     }
     glEnd();
@@ -57,22 +61,23 @@ void display()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
+    if (spaceView) {
+        gluLookAt(0, spaceship->animValues.y - (3 * spaceship->getRadius()), 0, 0, 0, 0, 0, 0, 1);
+    } else {
+        gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
+    }
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
 
     glRotatef(angle, 0.0, 1.0, 0.0);		//rotate the whole scene
 
-    //glPushMatrix();
-//        drawFloor();
-  //  glPopMatrix();
 
     glColor3f(1, 0, 0);
     glPushMatrix();
         if (!robots[0]->dead) {
             glPushMatrix();
-                glTranslatef(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+                glTranslated(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
                 glRotatef(90, 0, 1, 0);
                 glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
                 glPushMatrix();
@@ -88,7 +93,7 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-        glTranslatef(0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+        glTranslated(0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
         glRotatef(180, 0, 1, 0);
         glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
         if (!robots[1]->dead) {
@@ -111,6 +116,15 @@ void display()
     glPushMatrix();
         skybox->drawSkybox();
     glPopMatrix();
+
+
+    glPushMatrix();
+        drawFloor();
+    glPopMatrix();
+
+    //glPushMatrix();
+    //    tank->drawTank();
+    //glPopMatrix();
 
     glutSwapBuffers();
     glFlush();
@@ -169,38 +183,42 @@ void keyboard(unsigned char key, int x, int y) {
 // To enable the use of left and right arrow keys to rotate the scene
 void special(int key, int x, int y)
 {
-    float radAngle = angle * M_PI / 180;
+    double radAngle = angle * M_PI / 180;
 
-    if(key == GLUT_KEY_LEFT) {
+    if (key == GLUT_KEY_LEFT) {
         angle-=5;
         radAngle = angle * M_PI/180;
     }
-    else if(key == GLUT_KEY_RIGHT) {
+    else if (key == GLUT_KEY_RIGHT) {
         angle+=5;
         radAngle = angle * M_PI / 180;
     }
-    else if(key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
+    else if (key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
         eyeY += 1 * cos(radAngle);
     }
-    else if(key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
+    else if (key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
         eyeY -= 1 * cos(radAngle);
     }
-    else if(key == GLUT_KEY_UP) {
+    else if (key == GLUT_KEY_UP) {
         eyeX += 1 * sin(radAngle); //Change to 0.5 for PROD
         eyeZ -= 1 * cos(radAngle);
     }
-    else if(key == GLUT_KEY_DOWN) {
+    else if (key == GLUT_KEY_DOWN) {
         eyeX -= 1 * sin(radAngle);
         eyeZ += 1 * cos(radAngle);
     }
+    else if (key == GLUT_KEY_HOME) {
+        spaceView ^= true;
+    }
 
+
+    lookX = eyeX + 1000*sin(radAngle);
+    lookY = 0;
+    lookZ = eyeZ - 1000*cos(radAngle);
 
     if (eyeY <= 5.5) {
         eyeY = 5.5;
     }
-
-    lookX = eyeX + 1000*sin(radAngle);
-    lookZ = eyeZ - 1000*cos(radAngle);
 
 
     glutPostRedisplay();
@@ -291,6 +309,8 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
+
+    //tank->loadTex();
 
     display();
 
