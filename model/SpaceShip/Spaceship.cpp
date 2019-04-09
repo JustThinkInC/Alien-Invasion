@@ -8,8 +8,9 @@
 
 Spaceship::AnimValues Spaceship::animValues;
 
-Spaceship::Spaceship(int radius){
+Spaceship::Spaceship(int radius) {
     this->radius = radius;
+    this->boosterRadius = 0.4 * radius;
     animValues.takeOffValue = 0;
     animValues.idleValue = 0;
     animValues.dieValue = 0;
@@ -21,11 +22,22 @@ Spaceship::Spaceship(int radius){
 }
 
 
+/**
+ * Load the textures to use on spaceship
+ */
 void Spaceship::loadTex() {
-    glGenTextures(1, &wingTex); 				// Create a Texture object
-    glBindTexture(GL_TEXTURE_2D, wingTex);		//Use this texture
+    glGenTextures(2, texIds);
+
+    //Wing tip texture
+    glBindTexture(GL_TEXTURE_2D, texIds[0]);
     loadTGA("../assets/metal.tga");
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //Flames texture
+    glBindTexture(GL_TEXTURE_2D, texIds[1]);
+    loadTGA("../assets/explosion.tga");
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
@@ -68,6 +80,7 @@ void Spaceship::takeDamage(int damage) {
     checkAlive();
 }
 
+
 /**
  * Checks if a apaceship is alive,
  * if not start destroy animation
@@ -77,11 +90,81 @@ void Spaceship::checkAlive() {
 }
 
 
+/**
+ * Draw a single flame particle and texture it for booster
+ */
+void Spaceship::drawFlameParticle() {
+    glDisable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, texIds[1]);
+    glBegin(GL_QUADS);
+            glVertex3f(0, 0, 0);        glTexCoord2f(1, 0);
+            glVertex3f(1, 0, 0);        glTexCoord2f(1, 1);
+            glVertex3f(1, 1, 0);        glTexCoord2f(0, 1);
+            glVertex3f(0, 1, 0);        glTexCoord2f(0, 0);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+}
+
+
+/**
+ * Draw a flame per booster
+ * Each flame has 50 particles
+ */
+void Spaceship::drawFlames() {
+    if (animValues.grounded) return;
+    float xDir = 1;
+    float zDir = 1;
+    // Create a flame per booster
+    for (int i = 0; i < 4; i++) {
+        // Decide whether to switch directions
+        if (i % 2 == 1) {
+            xDir = -1;
+            zDir = -1;
+        }
+
+        // Creat the 50 particles per booster
+        for (int j = 0; j < FLAMES; j++) {
+            int roundedRadius = round(boosterRadius);
+            int maxY = round(animValues.y) - 10;
+            int minY = round(animValues.y) - 40;
+
+            double flameA = rand() * 2 * M_PI;  // Random angle
+            double flameR = (roundedRadius * 0.75) * sqrt(rand() % roundedRadius); // Random radius for flame
+
+            double flameX = flameR * cos(flameA); // X value based on randomised angle and radius
+            double flameZ = rand() % roundedRadius; // Random z value between 0 and radius
+            double flameY = rand() % (maxY - minY + 1) + minY;
+
+            // Draw the flame in the +Z direction
+            glPushMatrix();
+                glTranslatef(xDir * (flameX - 5), flameY, zDir * flameZ);
+                glScalef(10, 10, 10);
+                drawFlameParticle();
+            glPopMatrix();
+
+            // Draw the flame in the -Z direction
+            glPushMatrix();
+                glTranslatef(xDir * (flameX - 5), flameY, -zDir * flameZ);
+                glScalef(5, 5, 5);
+                drawFlameParticle();
+            glPopMatrix();
+        }
+    }
+}
+
+
+/**
+ * Draw the wing tips and texture them
+ */
 void Spaceship::drawWingTips() {
     glDisable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 
-    glBindTexture(GL_TEXTURE_2D, wingTex);
+    glBindTexture(GL_TEXTURE_2D, texIds[0]);
     glBegin(GL_TRIANGLES);
         // Right wing tip
         glTexCoord2f(1,  0);    glVertex3f(radius, 10+animValues.y, 0);
@@ -100,7 +183,7 @@ void Spaceship::drawWingTips() {
         // Front wing tip
         glTexCoord2f(1, 0);    glVertex3f(0, 10+animValues.y,  radius);
         glTexCoord2f(1, 1);    glVertex3f(0, 30+animValues.y,  radius);
-        glTexCoord2f(0, 1);    glVertex3f(0, 10, radius+20);
+        glTexCoord2f(0, 1);    glVertex3f(0, 10+animValues.y, radius+20);
     glEnd();
 
     glBegin(GL_TRIANGLES);
@@ -145,8 +228,10 @@ void Spaceship::drawWingTips() {
 }
 
 
+/**
+ * Draw the entire spaceship
+ */
 void Spaceship::drawSpaceship() {
-
     //Body
     glPushMatrix();
         glTranslatef(0, 10+animValues.y, 0);
@@ -175,22 +260,34 @@ void Spaceship::drawSpaceship() {
             zDir = -1;
         }
         glPushMatrix();
-            glTranslatef(xDir * 0.4*radius, 0+animValues.y, zDir * 0.4*radius);
+            glTranslatef(xDir * boosterRadius, 0+animValues.y, zDir * boosterRadius);
             drawCylinder(0.3*radius, 20);
         glPopMatrix();
         glPushMatrix();
-            glTranslatef(xDir * 0.4*radius, 0+animValues.y, -zDir * 0.4*radius);
+            glTranslatef(xDir * boosterRadius, 0+animValues.y, -zDir * boosterRadius);
             drawCylinder(0.3*radius, 20);
         glPopMatrix();
     }
+
+    glPushMatrix();
+        drawFlames();
+    glPopMatrix();
 }
 
 
+/**
+ * Animation for destroying spaceship
+ * @param index
+ */
 void Spaceship::destroyAnim(int index) {
     return;
 }
 
 
+/**
+ * Animation for spaceship takeoff
+ * @param value
+ */
 void Spaceship::takeOffAnim(int value) {
     if (value < TAKE_OFF_TIME) {
         animValues.grounded = false;
