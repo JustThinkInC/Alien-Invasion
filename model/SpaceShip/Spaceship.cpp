@@ -36,7 +36,7 @@ void Spaceship::loadTex() {
 
     //Flames texture
     glBindTexture(GL_TEXTURE_2D, texIds[1]);
-    loadTGA("../assets/explosion.tga");
+    loadTGA("../assets/fire.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
@@ -98,12 +98,15 @@ void Spaceship::drawFlameParticle() {
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texIds[1]);
-    glBegin(GL_QUADS);
-            glVertex3f(0, 0, 0);        glTexCoord2f(1, 0);
-            glVertex3f(1, 0, 0);        glTexCoord2f(1, 1);
-            glVertex3f(1, 1, 0);        glTexCoord2f(0, 1);
-            glVertex3f(0, 1, 0);        glTexCoord2f(0, 0);
+
+    // Use a triangle to create a nicer flame effect
+    glBegin(GL_TRIANGLES);
+        glVertex3f(0, 1, 0);        glTexCoord2f(1, 0);
+        glVertex3f(1, 1, 0);        glTexCoord2f(0, 1);
+        glVertex3f(0.5, 0, 0);        glTexCoord2f(1, 1);
     glEnd();
+
+    glTexCoord2f(0, 0);
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
@@ -152,14 +155,14 @@ void Spaceship::drawFlames() {
         // Creat the 50 particles per booster
         for (int j = 0; j < FLAMES; j++) {
             int roundedRadius = round(boosterRadius);
-            int maxY = round(animValues.y) - 10;
+            int maxY = round(animValues.y) - 5;
             int minY = round(animValues.y) - 40;
 
             double flameA = rand() * 2 * M_PI;  // Random angle
             double flameR = (roundedRadius * 0.75) * sqrt(rand() % roundedRadius); // Random radius for flame
 
             double flameX = flameR * cos(flameA); // X value based on randomised angle and radius
-            double flameZ = rand() % roundedRadius; // Random z value between 0 and radius
+            double flameZ = rand() % (roundedRadius * 2); // Random z value between 0 and radius
             double flameY = rand() % (maxY - minY + 1) + minY;
 
             // Draw the flame in the +Z direction
