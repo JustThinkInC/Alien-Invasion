@@ -14,7 +14,7 @@
 #include <math.h>
 #include <GL/freeglut.h>
 
-#define ROBOT_SCALE 0.1
+#define ROBOT_SCALE 0.4
 
 static float angle = 0.0;  //Rotation angle for viewing
 static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
@@ -68,25 +68,20 @@ void display()
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
 
-    glRotatef(angle, 0.0, 1.0, 0.0);		//rotate the whole scene
-
-
     glColor3f(1, 0, 0);
     glPushMatrix();
+        glTranslated(-0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+        glRotatef(90, 0, 1, 0);
+        glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
+        glPushMatrix();
+            glRotatef(-90, 0, -1, 0);
+            float dir[] = {-1, -1, 0};
+            float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
+            // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
+            //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
+        glPopMatrix();
         if (!robots[0]->dead) {
-            glPushMatrix();
-                glTranslated(-0.25*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
-                glRotatef(90, 0, 1, 0);
-                glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
-                glPushMatrix();
-                    glRotatef(-90, 0, -1, 0);
-                    float dir[] = {-1, -1, 0};
-                    float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
-                    // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
-                    //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
-                glPopMatrix();
-                robots[0]->drawRobot();
-            glPopMatrix();
+            robots[0]->drawRobot();
         }
     glPopMatrix();
 
@@ -100,10 +95,13 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-        //castle->drawCastle();
+        glTranslatef(0, 0, -200);
+        castle->drawCastle();
     glPopMatrix();
 
     glPushMatrix();
+        glTranslatef(0,  0, -150);
+        glScalef(2, 2, 2);
         cannons[0]->drawCannon();
     glPopMatrix();
 
@@ -220,9 +218,9 @@ void special(int key, int x, int y)
     }
 
 
-    lookX = eyeX + 1000*sin(radAngle);
+    lookX = eyeX + 100*sin(radAngle);
     lookY = 0;
-    lookZ = eyeZ - 1000*cos(radAngle);
+    lookZ = eyeZ - 100*cos(radAngle);
 
     if (eyeY <= 5.5) {
         eyeY = 5.5;
@@ -237,8 +235,8 @@ void initObjects() {
     skybox = new Skybox();
     skybox->loadTextures();
 
-    castle = new Castle(150, 50);
-    castle->yLevel = castle->getHeight() / 2;
+    //castle = new Castle(300, 100);
+    castle = new Castle(450, 200);
     castle->loadTex();
 
     for(int i=0; i < 4;i++) {
@@ -251,7 +249,7 @@ void initObjects() {
 
     for (int i=0; i < 2; i++) {
         robots[i] = new Robots();
-        robots[i]->patrolDistance = castle->getLength();
+        robots[i]->patrolDistance = 0.8*castle->getLength();
     }
 
     for (int i = 0; i < 4; i++) {
@@ -298,7 +296,7 @@ void initialize()
 
     initObjects();
 
-    eyeZ = castle->getLength() * 2;
+    eyeZ = castle->getLength();
     eyeY = 5.5;
 }
 
@@ -317,8 +315,6 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
-
-    //tank->loadTex();
 
     display();
 
