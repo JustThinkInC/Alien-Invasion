@@ -34,9 +34,9 @@ public:
         int angle = 0;
     };
 
-    float xFront, yFront, zFront; //Coordinates of front wall
+    double xFront, yFront, zFront; //Coordinates of front wall
 
-    float yLevel; //Distance above ground
+    double yLevel; //Distance above ground
     static struct Wall* walls[5];
     static struct Gate gate;
 

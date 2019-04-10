@@ -17,12 +17,13 @@ Castle::Gate Castle::gate;
 Castle::Castle(int length, int height){
     this->length = length;
     this->height = height;
-    this->yLevel = height/2;
-    for(int i=0;i<5;i++) {
+    this->yLevel = height * 0.5;
+
+    for (int i = 0; i < 5; i++) {
         walls[i] = new Wall;
         walls[i]->length = this->length;
-        walls[i]->number = i;
     }
+
     xFront = 5;
     yFront = yLevel;
     zFront = 0.5 * length;
