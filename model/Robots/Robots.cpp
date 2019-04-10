@@ -8,87 +8,18 @@
 #include "../Shapes/Shapes.h"
 #include <math.h>
 #include <GL/freeglut.h>
-
 using namespace std;
-
-// Disastrous way of trying to allow
-// control of robot components separately
-struct RobotData {
-    struct head {
-        float x = 0;
-        float y = 140;
-        float z = 0;
-        float size = 20;
-        float colour[3] = {};
-    };
-
-    struct rightEye {
-        float x = 0;
-        float y = 140;
-        float z = 0;
-        float size = 20;
-        float colour[3] = {};
-    };
-
-    struct leftEye {
-
-    };
-
-    struct neck {
-        float x = 10;
-        float y = 140;
-        float z = 19;
-    };
-
-    struct body {
-
-    };
-
-    struct leftShoulder {
-
-    };
-
-    struct rightShoulder {
-
-    };
-
-    struct rightElbow {
-
-    };
-
-    struct leftElbow {
-
-    };
-
-    struct upperRightArm {
-
-    };
-
-    struct upperLeftArm {
-
-    };
-
-    struct rightArm {
-
-    };
-
-    struct leftArm {
-
-    };
-
-    struct legLink {
-
-    };
-
-    struct legBall {
-
-    };
-};
 
 Robots *robots[2];
 
 void Robots::drawRobot() {
 
+    width = 60; // Head radius + body radius + shoulder diameter
+    // head radius + neck length + body length + leg link length + leg ball radius
+    height = 183;
+    x = deltaX;
+    y = deltaY;
+    z = deltaZ;
 
     // Rotate in place by step when turning
     // otherwise rotate 180 by y-axis
@@ -139,7 +70,6 @@ void Robots::drawRobot() {
         glScalef(1, -0.75, 1);
         drawCone(20, 100);
     glPopMatrix();
-
 
     //Right Shoulder
     glPushMatrix();
@@ -201,7 +131,7 @@ void Robots::drawRobot() {
         drawCylinder(5, 30);
     glPopMatrix();
 
-    // Link to leg ball thing
+    // Leg link
     glPushMatrix();
         glTranslatef(0 + deltaX, 50 + deltaY, 0 + deltaZ);
         glColor4f(0.46, 0.46, 0.46, alpha);
@@ -209,7 +139,7 @@ void Robots::drawRobot() {
         drawCylinder(5, 20);
     glPopMatrix();
 
-    // Leg ball thing
+    // Leg ball
     glPushMatrix();
         glTranslatef(0 + deltaX, 20 + deltaY, 0 + deltaZ);
         glColor4f(0.46, 0.46, 0.46, alpha);

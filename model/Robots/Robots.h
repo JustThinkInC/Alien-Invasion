@@ -26,6 +26,8 @@ public:
          int dieValue;
      };
 
+     double height, width, x, y, z;
+
      AnimValues animValues = {0};
      Robots() {}
 
