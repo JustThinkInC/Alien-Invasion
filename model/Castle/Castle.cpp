@@ -278,15 +278,15 @@ void Castle::drawCastle() {
     // Front Right pillar
     glPushMatrix();
         glTranslated(0.5*length+10, 0, length * 0.5);
-        glScalef(3, 3, 3);
+        glScalef(4, 4, 4);
         drawPillars(false);
     glPopMatrix();
 
     // Front left pillar
     glPushMatrix();
-        glTranslated(-(0.5*length), 0, (length*0.5)+5);
+        glTranslated(-(0.5*length), 0, (length*0.5)+10);
         glRotatef(-90, 0, 1, 0);
-        glScalef(3, 3, 3);
+        glScalef(4, 4, 4);
         drawPillars(true);
     glPopMatrix();
 
@@ -294,7 +294,7 @@ void Castle::drawCastle() {
     glPushMatrix();
         glTranslated((0.5*length+10), 0, -(length * 0.5)-5);
         glRotatef(-90, 0, 1, 0);
-        glScalef(3, 3, 3);
+        glScalef(4, 4, 4);
         drawPillars(true);
     glPopMatrix();
 
@@ -302,7 +302,7 @@ void Castle::drawCastle() {
     glPushMatrix();
         glTranslated(-(0.5*length+5), 0, -(length * 0.5));
         glRotatef(-90, 0, 1, 0);
-        glScalef(3, 3, 3);
+        glScalef(4, 4, 4);
         drawPillars(false);
     glPopMatrix();
 }
