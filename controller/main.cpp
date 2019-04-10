@@ -19,6 +19,7 @@
 static float angle = 0.0;  //Rotation angle for viewing
 static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
 static bool spaceView = false;
+static double minBoundary = -950, maxBoundary = 950;
 
 Castle* castle;
 Skybox* skybox;
@@ -60,13 +61,15 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if (spaceView) {
-        gluLookAt(0, spaceship->animValues.y - (3 * spaceship->getRadius()), 0, 0, 0, 0, 0, 0, 1);
+        gluLookAt(0, spaceship->animValues.y + 5, -200, 0,
+                -spaceship->animValues.y, 0, 0, 0, 1);
     } else {
         gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
     }
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
+    cout << eyeZ << endl;
 
     glColor3f(1, 0, 0);
     glPushMatrix();
@@ -106,6 +109,7 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
+        glTranslatef(0, 0, -200);
         spaceship->drawSpaceship();
     glPopMatrix();
 
@@ -205,26 +209,38 @@ void special(int key, int x, int y)
     else if (key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
         eyeY -= 1 * cos(radAngle);
     }
-    else if (key == GLUT_KEY_UP) {
-        eyeX += 1 * sin(radAngle); //Change to 0.5 for PROD
-        eyeZ -= 1 * cos(radAngle);
+    else if (key == GLUT_KEY_UP && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+        eyeX += 100 * sin(radAngle);
+        eyeZ -= 100 * cos(radAngle);
     }
-    else if (key == GLUT_KEY_DOWN) {
-        eyeX -= 1 * sin(radAngle);
-        eyeZ += 1 * cos(radAngle);
+    else if (key == GLUT_KEY_DOWN && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+        eyeX -= 100 * sin(radAngle);
+        eyeZ += 100 * cos(radAngle);
     }
     else if (key == GLUT_KEY_HOME) {
         spaceView ^= true;
     }
 
+    if (eyeY <= 20.5) {
+        eyeY = 20.5;
+    }
+
+    if (eyeZ >= maxBoundary) {
+        eyeZ = maxBoundary;
+    } else if (eyeZ <= minBoundary) {
+        eyeZ = minBoundary;
+    }
+
+    if (eyeX >= maxBoundary) {
+        eyeX = maxBoundary;
+    } else if (eyeX <= minBoundary) {
+        eyeX = minBoundary;
+    }
 
     lookX = eyeX + 100*sin(radAngle);
-    lookY = 0;
+    lookY = eyeY;
     lookZ = eyeZ - 100*cos(radAngle);
 
-    if (eyeY <= 5.5) {
-        eyeY = 5.5;
-    }
 
 
     glutPostRedisplay();
@@ -236,7 +252,8 @@ void initObjects() {
     skybox->loadTextures();
 
     //castle = new Castle(300, 100);
-    castle = new Castle(450, 200);
+    //castle = new Castle(450, 200);
+    castle = new Castle(900, 300);
     castle->loadTex();
 
     for(int i=0; i < 4;i++) {
@@ -306,11 +323,13 @@ int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize (600, 600);
+    glutInitWindowSize (1920, 1080);//(600, 600);
 
-    glutInitWindowPosition (10, 10);
+    glutInitWindowPosition (1, 1);//(10, 10);
     glutCreateWindow ("Main");
     initialize();
+
+    //glutFullScreen();
 
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
