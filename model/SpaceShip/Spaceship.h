@@ -4,7 +4,7 @@
 
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
-#define TAKE_OFF_TIME 100
+#define FLIGHT_TIME 180 // Time before spaceship hovers
 #define FLAMES 50    // Fire particles per booster
 
 #include <GL/freeglut.h>

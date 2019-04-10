@@ -140,7 +140,6 @@ void Spaceship::drawBoosters() {
  * Each flame has 50 particles
  */
 void Spaceship::drawFlames() {
-    if (animValues.grounded) return;
     float xDir = 1;
     float zDir = 1;
     // Create a flame per booster
@@ -282,9 +281,11 @@ void Spaceship::drawSpaceship() {
     glPopMatrix();
 
     // Render the flames
-    glPushMatrix();
-        drawFlames();
-    glPopMatrix();
+    if (animValues.takeOffValue < FLIGHT_TIME && !animValues.grounded) {
+        glPushMatrix();
+          drawFlames();
+        glPopMatrix();
+    }
 }
 
 
@@ -302,7 +303,7 @@ void Spaceship::destroyAnim(int index) {
  * @param value
  */
 void Spaceship::takeOffAnim(int value) {
-    if (value < TAKE_OFF_TIME) {
+    if (value < FLIGHT_TIME) {
         animValues.grounded = false;
         animValues.y += 10;
         animValues.takeOffValue ++;
