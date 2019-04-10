@@ -13,14 +13,6 @@ using namespace std;
 Robots *robots[2];
 
 void Robots::drawRobot() {
-
-    width = 60; // Head radius + body radius + shoulder diameter
-    // head radius + neck length + body length + leg link length + leg ball radius
-    height = 183;
-    x = deltaX;
-    y = deltaY;
-    z = deltaZ;
-
     // Rotate in place by step when turning
     // otherwise rotate 180 by y-axis
     if (turning) {

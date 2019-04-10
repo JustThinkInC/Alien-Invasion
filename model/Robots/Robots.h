@@ -26,7 +26,9 @@ public:
          int dieValue;
      };
 
-     double height, width, x, y, z;
+      // Width is Head radius + body radius + shoulder diameter
+      // Height is Head radius + neck length + body length + leg link length + leg ball radius
+     double height = 183, width = 60, x, y, z;
 
      AnimValues animValues = {0};
      Robots() {}
