@@ -213,7 +213,7 @@ void Castle::drawCastle() {
         walls[0]->x = gateWidth*1.5;
         walls[0]->y = yLevel;
         walls[0]->z = 0.5 * length;
-        walls[0]->length = 0.5 * length;
+        walls[0]->length = 0.3 * length;
     glPopMatrix();
 
     // Front wall right half
@@ -224,7 +224,7 @@ void Castle::drawCastle() {
         walls[1]->x = -gateWidth*1.5;
         walls[1]->y = yLevel;
         walls[1]->z = 0.5 * length;
-        walls[1]->length = 0.5 * length;
+        walls[1]->length = 0.3 * length;
     glPopMatrix();
 
     // Right wall
