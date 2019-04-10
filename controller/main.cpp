@@ -68,7 +68,7 @@ void display()
     }
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-    
+
     glColor3f(1, 0, 0);
     glPushMatrix();
         glTranslated(-0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
@@ -83,6 +83,8 @@ void display()
         glPopMatrix();
         if (!robots[0]->dead) {
             robots[0]->drawRobot();
+            robots[0]->x = -0.5 * castle->getLength() + robots[0]->deltaX;
+            robots[0]->z = 0.5 * castle->getLength() + 5 + robots[0]->deltaZ;
         }
     glPopMatrix();
 
@@ -92,6 +94,8 @@ void display()
         glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
         if (!robots[1]->dead) {
             robots[1]->drawRobot();
+            robots[1]->x = 0.5 * castle->getLength() + robots[1]->deltaX;
+            robots[1]->z = 0.5 * castle->getLength() + 5 + robots[1]->deltaZ;
         }
     glPopMatrix();
 
@@ -136,6 +140,50 @@ void display()
 
     glutSwapBuffers();
     glFlush();
+}
+
+
+bool collisionCheck(bool down) {
+    static int numRobots = sizeof(robots) / sizeof(robots[0]);
+    float radAngle = angle * M_PI / 180;
+    double newX = eyeX + 100 * sin(radAngle);
+    double newZ = eyeZ - 100 * cos(radAngle);
+    bool xCol;
+    bool zCol;
+    if (down) {
+        newX = eyeX - 100 * sin(radAngle);
+        newZ = eyeZ + 100 * cos(radAngle);
+    }
+
+    // Check collision with robots;
+    for (int i = 0; i < numRobots; i++) {
+        xCol = ((robots[i]->x - robots[i]->width) == newX) || (newX == (robots[i]->x + robots[i]->width));
+        zCol = ((robots[i]->z - robots[i]->width) == newZ) || (newZ == (robots[i]->z + robots[i]->width));
+        if (xCol && zCol) {
+            //eyeX -= robots[i]->width;
+            //eyeZ -=  robots[i]->width;
+            cout << "-X " << robots[i]->x - robots[i]->width << " +X " << (robots[i]->x + robots[i]->width) << " newC" << newX << " oldC " << eyeX << " -Z " << (robots[i]->z - robots[i]->width) << " +Z " << (robots[i]->z + robots[i]->width) << endl;
+            cout << "ROBOT COLLISION" << endl;
+            return true;
+        }
+    }
+
+    // Check collision with castle walls;
+    for (int i = 0; i < 5; i++) {
+        double wallX = castle->walls[i]->x;
+        double wallZ = castle->walls[i]->z;
+        double wallLength = castle->walls[i]->length;
+        xCol = ((wallX - wallLength) == newX) || (newX == (wallX + wallLength));
+        zCol = ((wallZ - wallLength) == newZ) || (newZ == (wallZ + wallLength));
+        if ( xCol && zCol) {
+            //eyeX -= wallLength;
+            //eyeZ -=  wallLength;
+            cout << "WALL COLLISION" << endl;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 
@@ -207,28 +255,27 @@ void special(int key, int x, int y)
     else if (key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
         eyeY -= 1 * cos(radAngle);
     }
-    else if (key == GLUT_KEY_UP && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+    else if (key == GLUT_KEY_UP && !collisionCheck(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX += 100 * sin(radAngle);
         eyeZ -= 100 * cos(radAngle);
     }
-    else if (key == GLUT_KEY_DOWN && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+    else if (key == GLUT_KEY_DOWN && !collisionCheck(true) && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX -= 100 * sin(radAngle);
         eyeZ += 100 * cos(radAngle);
     }
     else if (key == GLUT_KEY_HOME) {
-        spaceView ^= true;
+        spaceView ^= true;  // Toggle states
     }
+
 
     if (eyeY <= 20.5) {
         eyeY = 20.5;
     }
-
     if (eyeZ >= maxBoundary) {
         eyeZ = maxBoundary;
     } else if (eyeZ <= minBoundary) {
         eyeZ = minBoundary;
     }
-
     if (eyeX >= maxBoundary) {
         eyeX = maxBoundary;
     } else if (eyeX <= minBoundary) {
@@ -251,7 +298,7 @@ void initObjects() {
 
     //castle = new Castle(300, 100);
     //castle = new Castle(450, 200);
-    castle = new Castle(900, 300);
+    castle = new Castle(700, 300);
     castle->loadTex();
 
     for(int i=0; i < 4;i++) {
@@ -265,6 +312,8 @@ void initObjects() {
     for (int i=0; i < 2; i++) {
         robots[i] = new Robots();
         robots[i]->patrolDistance = 0.8*castle->getLength();
+        robots[i]->width *= ROBOT_SCALE;
+        robots[i]->height *= ROBOT_SCALE;
     }
 
     for (int i = 0; i < 4; i++) {
@@ -321,10 +370,10 @@ int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize (1920, 1080);//(600, 600);
-
-    glutInitWindowPosition (1, 1);//(10, 10);
-    glutCreateWindow ("Main");
+    glutInitWindowSize (600, 600);
+    //glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
+    glutInitWindowPosition(0, 0);
+    glutCreateWindow ("Alien Invasion!");   // Assignment title
     initialize();
 
     //glutFullScreen();
