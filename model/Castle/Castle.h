@@ -14,8 +14,12 @@ private:
     int length;
     int height;
     int columns;
-    GLuint doorTexId;
+    GLuint texIds[2];
     void drawGate(float length);
+    void drawWall();
+    void normal(float x1, float y1, float z1,
+                     float x2, float y2, float z2,
+                     float x3, float y3, float z3 );
 
 public:
     Castle(int length, int height);
@@ -53,6 +57,8 @@ public:
     int getHeight();
 
     void destroyWall(Wall* wall);
+
+    void drawPillars(bool triangular);
 
     void drawCastle();
 
