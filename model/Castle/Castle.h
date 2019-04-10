@@ -46,13 +46,9 @@ public:
 
     int getHeight();
 
-    void destroyWall(Wall* wall);
-
     void drawPillars(bool triangular);
 
     void drawCastle();
-
-    static void fadeWallAnim(int wallNum);
 
     static void openGateAnim(int value);
 

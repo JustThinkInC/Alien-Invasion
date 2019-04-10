@@ -71,10 +71,6 @@ void Castle::drawGate(double length) {
 }
 
 
-int Castle::getColumns() {
-    return this->columns;
-}
-
 /**
  * Calculate normals
  * @param x1
@@ -285,35 +281,6 @@ void Castle::drawCastle() {
 
 
 /**
- * Destroy a wall and play the fade animation
- * @param wall
- */
-void Castle::destroyWall(Castle::Wall* wall) {
-    wall->health = 0;
-    glutTimerFunc(0, fadeWallAnim, wall->number);
-}
-
-
-/**
- * Fade a wall, this sequence should play after
- * a wall has been destroyed
- * @param wallNum
- */
-void Castle::fadeWallAnim(int wallNum) {
-    Wall* wall = walls[wallNum];
-    wall->color[3] -= 0.1;
-    if (wall->color[3] < 0) {
-        wall->color[3] = 0;
-        wall->destroyed = true;
-        walls[wallNum] = NULL;
-        return;
-    }
-    glutPostRedisplay();
-    glutTimerFunc(50, fadeWallAnim, wallNum);
-}
-
-
-/**
  * Animation for opening the castle gate
  * @param angle
  */
@@ -351,25 +318,11 @@ void Castle::closeGateAnim(int angle) {
 }
 
 
-/**
- * Damage a castle wall
- * @param damage
- * @param wall
- */
-void Castle::damageWall(int damage, Castle::Wall *wall) {
-    wall->health -= damage;
-    if (wall->health <= 0) destroyWall(wall);
-}
-
-
-void Castle::setLength(int length) {
-    this->length = length;
-}
-
 
 int Castle::getLength() {
     return this->length;
 }
+
 
 int Castle::getHeight() {
     return this->height;
