@@ -15,7 +15,7 @@ private:
     int height;
     int columns;
     GLuint texIds[2];
-    void drawGate(float length);
+    void drawGate(double length);
     void drawWall();
     void normal(float x1, float y1, float z1,
                      float x2, float y2, float z2,
@@ -24,17 +24,13 @@ private:
 public:
     Castle(int length, int height);
     struct Wall {
-        int health = 100;
-        bool destroyed = false;
         int number;
         int length;
         float color[4] = {0, 0, 0, 1};
     };
 
     struct Gate {
-        int health = 100;
-        bool destroyed = false, open = false, opening = false, closed = true, closing = false;
-        float color[4] = {0.5, 0.5, 0.5, 1};
+        bool open = false, opening = false, closed = true, closing = false;
         float angle = 0;
     };
 
@@ -46,12 +42,6 @@ public:
 
     void loadTex();
 
-    void setColumns(int columns);
-
-    int getColumns();
-
-    void setLength(int length);
-
     int getLength();
 
     int getHeight();
@@ -61,8 +51,6 @@ public:
     void drawPillars(bool triangular);
 
     void drawCastle();
-
-    void damageWall(int damage, Wall* wall);
 
     static void fadeWallAnim(int wallNum);
 
