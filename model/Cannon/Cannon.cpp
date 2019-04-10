@@ -151,7 +151,7 @@ void fireCannonAnim(int index) {
 
     float g = 9.81;
     float theta = (cannon->tilt * M_PI) / 180;
-    float velocity = 30;
+    float velocity = 35;
     float vertV = velocity * sin(theta) - (g * *value);
     float time = (2 * velocity * sin(theta)) / g;
     double maxHeight = (velocity * time) - (0.5 * g * time * time);
