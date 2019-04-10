@@ -68,9 +68,7 @@ void display()
     }
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
-
-    cout << eyeZ << endl;
-
+    
     glColor3f(1, 0, 0);
     glPushMatrix();
         glTranslated(-0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
