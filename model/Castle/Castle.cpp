@@ -31,7 +31,7 @@ Castle::Castle(int length, int height){
 void Castle::loadTex() {
     glGenTextures(1, &doorTexId); 				// Create a Texture object
     glBindTexture(GL_TEXTURE_2D, doorTexId);		//Use this texture
-    loadTGA("../assets/gate.tga");
+    loadTGA("../assets/Castle/gate.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	//Set texture parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

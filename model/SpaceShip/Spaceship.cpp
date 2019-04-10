@@ -12,7 +12,6 @@ Spaceship::Spaceship(int radius) {
     this->radius = radius;
     this->boosterRadius = 0.4 * radius;
     animValues.takeOffValue = 0;
-    animValues.idleValue = 0;
     animValues.dieValue = 0;
     animValues.grounded = true;
 
@@ -30,13 +29,13 @@ void Spaceship::loadTex() {
 
     //Wing tip texture
     glBindTexture(GL_TEXTURE_2D, texIds[0]);
-    loadTGA("../assets/metal.tga");
+    loadTGA("../assets/Spaceship/metal.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     //Flames texture
     glBindTexture(GL_TEXTURE_2D, texIds[1]);
-    loadTGA("../assets/fire.tga");
+    loadTGA("../assets/Spaceship/fire.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }

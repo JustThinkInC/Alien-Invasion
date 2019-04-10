@@ -13,7 +13,7 @@ class Spaceship {
 
 private:
     int health = 100, radius = 50;
-    float boosterRadius = 20;
+    double boosterRadius = 20;
     void checkAlive();
     GLuint texIds[2];
 
@@ -32,10 +32,8 @@ public:
     bool isGrounded();
 
     struct AnimValues {
-        int idleValue;
         int takeOffValue;
         int dieValue;
-        int boosterValue;
         bool grounded;
         float x, y, z;
     };
