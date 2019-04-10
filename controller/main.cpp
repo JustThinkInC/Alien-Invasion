@@ -8,7 +8,7 @@
 #include "../model/Cannon/Cannon.h"
 #include "../model/SpaceShip/Spaceship.h"
 #include "../model/Skybox/Skybox.h"
-#include "../model/Tank/Tank.h"
+#include "../model/Pottery/Pottery.h"
 #include <iostream>
 #include <fstream>
 #include <math.h>
@@ -23,8 +23,6 @@ static bool spaceView = false;
 Castle* castle;
 Skybox* skybox;
 Spaceship* spaceship;
-
-Tank* tank = new Tank();
 
 void drawFloor()
 {
@@ -122,9 +120,19 @@ void display()
         drawFloor();
     glPopMatrix();
 
-    //glPushMatrix();
-    //    tank->drawTank();
-    //glPopMatrix();
+    glPushMatrix();
+        glTranslatef(17, 10, 250);
+        glColor4f(0.8, 0.93, 1, 0.25);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        drawWineGlass(true);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(-17, 10, 250);
+        glColor4f(0.8, 0.93, 1, 1);
+        drawWineGlass(false);
+    glPopMatrix();
 
     glutSwapBuffers();
     glFlush();
