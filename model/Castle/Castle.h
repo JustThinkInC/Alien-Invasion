@@ -24,14 +24,14 @@ private:
 public:
     Castle(int length, int height);
     struct Wall {
-        int number;
-        int length;
+        double length, x, y, z;
         float color[4] = {0, 0, 0, 1};
     };
 
     struct Gate {
+        double width, x, y, z;
         bool open = false, opening = false, closed = true, closing = false;
-        float angle = 0;
+        int angle = 0;
     };
 
     float xFront, yFront, zFront; //Coordinates of front wall

@@ -201,18 +201,29 @@ void Castle::drawWall() {
  * Draw all the castle components
  */
 void Castle::drawCastle() {
+
+    static double gateWidth = 0.4 * height * 1.4;
+
     // Front wall left half
     glPushMatrix();
-        glTranslated(length * 0.5, yLevel, 0.5*length);
-        glScaled(0.5, ((float) height)/length, 10.0/length);
+        glTranslated(gateWidth*1.5, yLevel, 0.5 * length);
+        glScaled(0.5, ((float) height) / length, 10.0 / length);
         drawWall();
+        walls[0]->x = gateWidth*1.5;
+        walls[0]->y = yLevel;
+        walls[0]->z = 0.5 * length;
+        walls[0]->length = 0.5 * length;
     glPopMatrix();
 
     // Front wall right half
     glPushMatrix();
-        glTranslated(-length * 0.5, yLevel, 0.5*length);
+        glTranslated(-gateWidth*1.5, yLevel, 0.5*length);
         glScaled(0.5, ((float) height)/length, 10.0/length);
         drawWall();
+        walls[1]->x = -gateWidth*1.5;
+        walls[1]->y = yLevel;
+        walls[1]->z = 0.5 * length;
+        walls[1]->length = 0.5 * length;
     glPopMatrix();
 
     // Right wall
@@ -221,30 +232,46 @@ void Castle::drawCastle() {
         glRotatef(90, 0, 1, 0);
         glScaled(1, ((float) height)/length, 10.0 / length);
         drawWall();
+        walls[2]->x = 0.5 * length;
+        walls[2]->y = yLevel;
+        walls[2]->z = 0;
+        walls[2]->length = length;
     glPopMatrix();
 
     // Back wall
     glPushMatrix();
-        glTranslated(0, yLevel, -0.5*length-10);
+        glTranslated(0, yLevel, -0.5 * length - 10);
         glScaled(1, ((float) height)/length, 10.0/length);
         drawWall();
+        walls[3]->x = 0;
+        walls[3]->y = yLevel;
+        walls[3]->z = -0.5 * length - 10;
+        walls[3]->length = length;
     glPopMatrix();
 
     // Left wall
     glPushMatrix();
-        glTranslated(-0.5*length, yLevel, 0);
+        glTranslated(-0.5 * length, yLevel, 0);
         glRotated(90, 0, 1, 0);
         glScaled(1, ((float) height)/length, 10.0/length);
         drawWall();
+        walls[4]->x = -0.5 * length;
+        walls[4]->y = yLevel;
+        walls[4]->z = 0;
+        walls[4]->length = length;
     glPopMatrix();
 
     // Gate
     glPushMatrix();
-        glTranslated(xFront/2, 40, 0.5 * length + 7);
+        glTranslated(xFront/2, 40, 0.5 * length);
         glRotated(gate.angle, 1, 0, 0);
-        glTranslated(xFront/2, 40, (0.5 * length + 7)/10);//12);
+        glTranslated(xFront/2, 40, (0.5 * length)/10);//12);
         glScaled(0.4, 1, 5.0 / length);
-        drawGate(height*1.4);
+        drawGate(height * 1.4);
+        gate.x = xFront / 2;
+        gate.y = 40;
+        gate.z = -0.5 * length;
+        gate.width = gateWidth;
     glPopMatrix();
 
     // Front Right pillar
