@@ -207,8 +207,8 @@ void Castle::drawCastle() {
 
     // Front wall left half
     glPushMatrix();
-        glTranslated(gateWidth*1.5, yLevel, 0.5 * length);
-        glScaled(0.3, ((float) height) / length, 10.0 / length);
+        glTranslated(gateWidth*1.3, yLevel, 0.5 * length);
+        glScaled(0.4, ((float) height) / length, 10.0 / length);
         drawWall();
         walls[0]->x = gateWidth*1.5;
         walls[0]->y = yLevel;
@@ -218,8 +218,8 @@ void Castle::drawCastle() {
 
     // Front wall right half
     glPushMatrix();
-        glTranslated(-gateWidth*1.5, yLevel, 0.5*length);
-        glScaled(0.3, ((float) height)/length, 10.0/length);
+        glTranslated(-gateWidth*1.3, yLevel, 0.5*length);
+        glScaled(0.4, ((float) height)/length, 10.0/length);
         drawWall();
         walls[1]->x = -gateWidth*1.5;
         walls[1]->y = yLevel;
