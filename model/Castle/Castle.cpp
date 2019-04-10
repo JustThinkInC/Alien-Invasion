@@ -51,18 +51,18 @@ void Castle::loadTex() {
  * Draw and texture the gate
  * @param length
  */
-void Castle::drawGate(float length) {
-    float halfLength = length * 0.5;
+void Castle::drawGate(double length) {
+    double halfLength = length * 0.5;
     glDisable(GL_LIGHTING);
     glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texIds[0]);
     glBegin(GL_QUADS);
-        glVertex3f(-halfLength, halfLength, length);    glTexCoord2f(1, 0);
-        glVertex3f(halfLength, halfLength, length);     glTexCoord2f(1, 1);
-        glVertex3f(halfLength, -halfLength, length);    glTexCoord2f(0, 1);
-        glVertex3f(-halfLength, -halfLength, length);   glTexCoord2f(0, 0);
+        glVertex3d(-halfLength, halfLength, length);    glTexCoord2f(1, 0);
+        glVertex3d(halfLength, halfLength, length);     glTexCoord2f(1, 1);
+        glVertex3d(halfLength, -halfLength, length);    glTexCoord2f(0, 1);
+        glVertex3d(-halfLength, -halfLength, length);   glTexCoord2f(0, 0);
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
@@ -205,55 +205,62 @@ void Castle::drawWall() {
  * Draw all the castle components
  */
 void Castle::drawCastle() {
-    // Front wall
+    // Front wall left half
     glPushMatrix();
-        glTranslatef(5, yLevel, 0.5*length);
-        glScalef(1.05, ((float) height)/length, 10.0/length);
+        glTranslated(length * 0.5, yLevel, 0.5*length);
+        glScaled(0.5, ((float) height)/length, 10.0/length);
+        drawWall();
+    glPopMatrix();
+
+    // Front wall right half
+    glPushMatrix();
+        glTranslated(-length * 0.5, yLevel, 0.5*length);
+        glScaled(0.5, ((float) height)/length, 10.0/length);
         drawWall();
     glPopMatrix();
 
     // Right wall
     glPushMatrix();
-        glTranslatef(0.5*length, yLevel, 0);
+        glTranslated(0.5*length, yLevel, 0);
         glRotatef(90, 0, 1, 0);
-        glScalef(1, ((float) height)/length, 10.0 / length);
+        glScaled(1, ((float) height)/length, 10.0 / length);
         drawWall();
     glPopMatrix();
 
     // Back wall
     glPushMatrix();
-        glTranslatef(0, yLevel, -0.5*length-10);
-        glScalef(1, ((float) height)/length, 10.0/length);
+        glTranslated(0, yLevel, -0.5*length-10);
+        glScaled(1, ((float) height)/length, 10.0/length);
         drawWall();
     glPopMatrix();
 
     // Left wall
     glPushMatrix();
-        glTranslatef(-0.5*length, yLevel, 0);
-        glRotatef(90, 0, 1, 0);
-        glScalef(1, ((float) height)/length, 10.0/length);
+        glTranslated(-0.5*length, yLevel, 0);
+        glRotated(90, 0, 1, 0);
+        glScaled(1, ((float) height)/length, 10.0/length);
         drawWall();
     glPopMatrix();
 
     // Gate
     glPushMatrix();
-        glTranslatef(xFront/2, 24, 0.5 * length + 7);
-        glRotatef(gate.angle, 1, 0, 0);
-        glTranslatef(xFront/2, 24, (0.5 * length + 7)/10);//12);
-        glScalef(0.75, 1, 5 / length);
-        drawGate(height);
+        glTranslated(xFront/2, 40, 0.5 * length + 7);
+        glRotated(gate.angle, 1, 0, 0);
+        glTranslated(xFront/2, 40, (0.5 * length + 7)/10);//12);
+        glScaled(0.4, 1, 5.0 / length);
+        drawGate(height*1.4);
     glPopMatrix();
 
     // Front Right pillar
     glPushMatrix();
-        glTranslated(0.5*length+10, 0, length/2);
+        glTranslated(0.5*length+10, 0, length * 0.5);
         glScalef(3, 3, 3);
         drawPillars(false);
     glPopMatrix();
 
     // Front left pillar
     glPushMatrix();
-        glTranslated(-(0.5*length), 0, length/2+5);
+        glTranslated(-(0.5*length), 0, (length*0.5)+5);
         glRotatef(-90, 0, 1, 0);
         glScalef(3, 3, 3);
         drawPillars(true);
@@ -261,7 +268,7 @@ void Castle::drawCastle() {
 
     // Rear right pillar
     glPushMatrix();
-        glTranslated((0.5*length+10), 0, -(length/2)-5);
+        glTranslated((0.5*length+10), 0, -(length * 0.5)-5);
         glRotatef(-90, 0, 1, 0);
         glScalef(3, 3, 3);
         drawPillars(true);
@@ -269,7 +276,7 @@ void Castle::drawCastle() {
 
     // Rear left pillar
     glPushMatrix();
-        glTranslated(-(0.5*length+5), 0, -(length/2));
+        glTranslated(-(0.5*length+5), 0, -(length * 0.5));
         glRotatef(-90, 0, 1, 0);
         glScalef(3, 3, 3);
         drawPillars(false);
