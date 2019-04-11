@@ -31,9 +31,11 @@ public:
     void drawWingTips();
     void drawSpaceship();
     bool isGrounded();
+    bool isFlying();
     struct AnimValues {
         int takeOffValue;
         bool grounded;
+        bool flying;
         float x, y, z;
     };
 

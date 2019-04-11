@@ -14,7 +14,7 @@ Spaceship::Spaceship(int radius) {
     this->bodyHeight = 3 * radius;
     animValues.takeOffValue = 0;
     animValues.grounded = true;
-
+    animValues.flying = false;
     animValues.x = 0;
     animValues.y = 0;
     animValues.z = 0;
@@ -59,6 +59,9 @@ bool Spaceship::isGrounded() {
     return this->animValues.grounded;
 }
 
+bool Spaceship::isFlying() {
+    return this->animValues.flying;
+}
 
 /**
  * Draw a single flame particle and texture it for booster
@@ -266,15 +269,6 @@ void Spaceship::drawSpaceship() {
 
 
 /**
- * Animation for destroying spaceship
- * @param index
- */
-void Spaceship::destroyAnim(int index) {
-    return;
-}
-
-
-/**
  * Animation for spaceship takeoff
  * @param value
  */
@@ -283,7 +277,10 @@ void Spaceship::takeOffAnim(int value) {
         animValues.grounded = false;
         animValues.y += 10;
         animValues.takeOffValue ++;
+        animValues.flying = true;
         glutPostRedisplay();
         glutTimerFunc(100, takeOffAnim, animValues.takeOffValue);
+    } else {
+        animValues.flying = false;
     }
 }
