@@ -16,6 +16,7 @@ void drawCube(float length);
 void drawSphere(float radius);
 //void drawSphere(float radius, int stacks, int slices);
 void drawEllipse(float radiusWidth, float radiusHeight);
+void drawPyramid(float baseLength);
 
 
 #endif //SHAPES_H
