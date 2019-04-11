@@ -61,34 +61,6 @@ bool Spaceship::isGrounded() {
 
 
 /**
- * Takes a default damage amount (5)
- */
-void Spaceship::takeDamage() {
-    this->health -= 5;
-    checkAlive();
-}
-
-
-/**
- * Take damage given a specified amount
- * @param damage
- */
-void Spaceship::takeDamage(int damage) {
-    this->health -= damage;
-    checkAlive();
-}
-
-
-/**
- * Checks if a apaceship is alive,
- * if not start destroy animation
- */
-void Spaceship::checkAlive() {
-    if (this->health <= 0) destroyAnim(1);
-}
-
-
-/**
  * Draw a single flame particle and texture it for booster
  */
 void Spaceship::drawFlameParticle() {
