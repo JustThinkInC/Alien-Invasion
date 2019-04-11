@@ -199,7 +199,7 @@ bool collisionCheck(bool down) {
     // Check collision with spaceship
     xCol = (-spaceship->getRadius() - 10 <= newX) && (newX <= spaceship->getRadius() + 10);
     zCol = (-spaceship->getRadius() - 200 - 10 <= newZ) && (newZ <= spaceship->getRadius() - 200 + 10);
-    if (xCol && zCol) {
+    if (xCol && zCol && (spaceship->animValues.y <= eyeY && eyeY <= spaceship->getBodyHeight())) {
         return true;
     }
     return false;
