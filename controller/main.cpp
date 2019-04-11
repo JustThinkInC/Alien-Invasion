@@ -17,7 +17,7 @@
 #define ROBOT_SCALE 0.4
 
 static float angle = 0.0;  //Rotation angle for viewing
-static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1;
+static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 10;
 static bool spaceView = false;
 static double minBoundary = -950, maxBoundary = 950;
 
@@ -146,22 +146,25 @@ void display()
 bool collisionCheck(bool down) {
     static int numRobots = sizeof(robots) / sizeof(robots[0]);
     float radAngle = angle * M_PI / 180;
-    double newX = eyeX + 100 * sin(radAngle);
-    double newZ = eyeZ - 100 * cos(radAngle);
+    double newX = eyeX + stepSpeed * sin(radAngle);
+    double newZ = eyeZ - stepSpeed * cos(radAngle);
     bool xCol;
     bool zCol;
+
     if (down) {
-        newX = eyeX - 100 * sin(radAngle);
-        newZ = eyeZ + 100 * cos(radAngle);
+        newX = eyeX - stepSpeed * sin(radAngle);
+        newZ = eyeZ + stepSpeed * cos(radAngle);
     }
 
     // Check collision with robots;
     for (int i = 0; i < numRobots; i++) {
-        xCol = ((robots[i]->x - robots[i]->width) == newX) || (newX == (robots[i]->x + robots[i]->width));
-        zCol = ((robots[i]->z - robots[i]->width) == newZ) || (newZ == (robots[i]->z + robots[i]->width));
+        double posX = robots[i]->x;
+        double width = robots[i]->width;
+        double posZ = robots[i]->z;
+        xCol = ((posX - width) == newX) || (newX == (posX + width));
+        zCol = ((posZ - width) == newZ) || (newZ == (posZ + width));
+
         if (xCol && zCol) {
-            //eyeX -= robots[i]->width;
-            //eyeZ -=  robots[i]->width;
             cout << "-X " << robots[i]->x - robots[i]->width << " +X " << (robots[i]->x + robots[i]->width) << " newC" << newX << " oldC " << eyeX << " -Z " << (robots[i]->z - robots[i]->width) << " +Z " << (robots[i]->z + robots[i]->width) << endl;
             cout << "ROBOT COLLISION" << endl;
             return true;
@@ -173,12 +176,21 @@ bool collisionCheck(bool down) {
         double wallX = castle->walls[i]->x;
         double wallZ = castle->walls[i]->z;
         double wallLength = castle->walls[i]->length;
-        xCol = ((wallX - wallLength) == newX) || (newX == (wallX + wallLength));
-        zCol = ((wallZ - wallLength) == newZ) || (newZ == (wallZ + wallLength));
+        double halfLength = wallLength * 0.5;
+
+        if (i == 2 || i == 4) {
+            xCol = (wallX - 35 < newX) && (newX < wallX + 35);
+            zCol = (wallZ - 200 - halfLength <= newZ) && (newZ <= wallZ + halfLength - 200);
+        } else {
+            xCol = (wallX - halfLength < newX) && (newX < wallX + halfLength);
+            zCol = (wallZ - 200 - 35 <= newZ) && (newZ <= wallZ - 200 + 35);
+        }
+
         if ( xCol && zCol) {
-            //eyeX -= wallLength;
-            //eyeZ -=  wallLength;
-            cout << "WALL COLLISION" << endl;
+            //TODO REMOVE ON FINISH
+            cout << " WALL NUM " << i << " XCOL " << xCol <<  " ZCOL " << zCol << endl;
+            cout << "newX " << newX << " wallX " << wallX  << " newZ " << newZ << " wallZ " << wallZ << endl;
+            cout << " HALF L " << halfLength << endl;
             return true;
         }
     }
@@ -242,11 +254,11 @@ void special(int key, int x, int y)
     double radAngle = angle * M_PI / 180;
 
     if (key == GLUT_KEY_LEFT) {
-        angle-=5;
+        angle -= 5;
         radAngle = angle * M_PI/180;
     }
     else if (key == GLUT_KEY_RIGHT) {
-        angle+=5;
+        angle += 5;
         radAngle = angle * M_PI / 180;
     }
     else if (key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
@@ -256,12 +268,12 @@ void special(int key, int x, int y)
         eyeY -= 1 * cos(radAngle);
     }
     else if (key == GLUT_KEY_UP && !collisionCheck(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
-        eyeX += 100 * sin(radAngle);
-        eyeZ -= 100 * cos(radAngle);
+        eyeX += stepSpeed * sin(radAngle);
+        eyeZ -= stepSpeed * cos(radAngle);
     }
     else if (key == GLUT_KEY_DOWN && !collisionCheck(true) && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
-        eyeX -= 100 * sin(radAngle);
-        eyeZ += 100 * cos(radAngle);
+        eyeX -= stepSpeed * sin(radAngle);
+        eyeZ += stepSpeed * cos(radAngle);
     }
     else if (key == GLUT_KEY_HOME) {
         spaceView ^= true;  // Toggle states
