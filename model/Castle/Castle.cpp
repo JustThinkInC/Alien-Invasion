@@ -152,6 +152,12 @@ void Castle::drawPillars(bool triangular) {
         }
 
     }
+
+    glPushMatrix();
+        glColor4f(1, 0.84, 0, 1);
+        glTranslatef(0.5*vx[N-1], vy[N-1], 2*vz[N-1]);
+        drawPyramid(10);
+    glPopMatrix();
 }
 
 /**
