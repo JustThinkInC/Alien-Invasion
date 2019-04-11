@@ -178,6 +178,7 @@ bool collisionCheck(bool down) {
         double wallLength = castle->walls[i]->length;
         double halfLength = wallLength * 0.5;
 
+        // Adjust collision check for left and right walls
         if (i == 2 || i == 4) {
             xCol = (wallX - 35 < newX) && (newX < wallX + 35);
             zCol = (wallZ - 200 - halfLength <= newZ) && (newZ <= wallZ + halfLength - 200);
@@ -188,13 +189,19 @@ bool collisionCheck(bool down) {
 
         if ( xCol && zCol) {
             //TODO REMOVE ON FINISH
-            cout << " WALL NUM " << i << " XCOL " << xCol <<  " ZCOL " << zCol << endl;
-            cout << "newX " << newX << " wallX " << wallX  << " newZ " << newZ << " wallZ " << wallZ << endl;
-            cout << " HALF L " << halfLength << endl;
+            //cout << " WALL NUM " << i << " XCOL " << xCol <<  " ZCOL " << zCol << endl;
+            //cout << "newX " << newX << " wallX " << wallX  << " newZ " << newZ << " wallZ " << wallZ << endl;
+            //cout << " HALF L " << halfLength << endl;
             return true;
         }
     }
 
+    // Check collision with spaceship
+    xCol = (-spaceship->getRadius() - 10 <= newX) && (newX <= spaceship->getRadius() + 10);
+    zCol = (-spaceship->getRadius() - 200 - 10 <= newZ) && (newZ <= spaceship->getRadius() - 200 + 10);
+    if (xCol && zCol) {
+        return true;
+    }
     return false;
 }
 
@@ -280,6 +287,7 @@ void special(int key, int x, int y)
     }
 
 
+    // Ensure camera in bounds
     if (eyeY <= 20.5) {
         eyeY = 20.5;
     }
@@ -297,7 +305,6 @@ void special(int key, int x, int y)
     lookX = eyeX + 100*sin(radAngle);
     lookY = eyeY;
     lookZ = eyeZ - 100*cos(radAngle);
-
 
 
     glutPostRedisplay();
