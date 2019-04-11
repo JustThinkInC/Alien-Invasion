@@ -356,7 +356,10 @@ void initObjects() {
     spaceship->loadTex();
 }
 
-//------- Initialize OpenGL parameters -----------------------------------
+
+/**
+ * Initialize OpenGL parameters
+ */
 void initialize()
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
@@ -391,7 +394,12 @@ void initialize()
 }
 
 
-//  ------- Main: Initialize glut window and register call backs -----------
+/**
+ * Main: Initialize glut window and register call backs
+ * @param argc
+ * @param argv
+ * @return
+ */
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
