@@ -145,7 +145,7 @@ void display()
 
 bool collisionCheck(bool down) {
     static int numRobots = sizeof(robots) / sizeof(robots[0]);
-    float radAngle = angle * M_PI / 180;
+    double radAngle = angle * M_PI / 180;
     double newX = eyeX + stepSpeed * sin(radAngle);
     double newZ = eyeZ - stepSpeed * cos(radAngle);
     bool xCol;
@@ -188,19 +188,18 @@ bool collisionCheck(bool down) {
         }
 
         if ( xCol && zCol) {
-            //TODO REMOVE ON FINISH
-            //cout << " WALL NUM " << i << " XCOL " << xCol <<  " ZCOL " << zCol << endl;
-            //cout << "newX " << newX << " wallX " << wallX  << " newZ " << newZ << " wallZ " << wallZ << endl;
-            //cout << " HALF L " << halfLength << endl;
             return true;
         }
     }
 
     // Check collision with spaceship
+    // Note that the player can move under the spaceship if it has taken off
     xCol = (-spaceship->getRadius() - 10 <= newX) && (newX <= spaceship->getRadius() + 10);
     zCol = (-spaceship->getRadius() - 200 - 10 <= newZ) && (newZ <= spaceship->getRadius() - 200 + 10);
-    if (xCol && zCol && (spaceship->animValues.y <= eyeY && eyeY <= spaceship->getBodyHeight())) {
-        return true;
+    if (eyeY <= spaceship->getBodyHeight()) {
+        if (xCol && zCol && spaceship->animValues.y <= eyeY) {
+            return true;
+        }
     }
     return false;
 }
