@@ -25,6 +25,7 @@ Castle* castle;
 Skybox* skybox;
 Spaceship* spaceship;
 
+
 void drawFloor()
 {
     float white[4] = {1., 1., 1., 1.};
@@ -143,6 +144,11 @@ void display()
 }
 
 
+/**
+ * Check collision of player with scene objects
+ * @param down If the player is moving back
+ * @return boolean value of collision
+ */
 bool collisionCheck(bool down) {
     static int numRobots = sizeof(robots) / sizeof(robots[0]);
     double radAngle = angle * M_PI / 180;
@@ -253,8 +259,13 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 
-//------------ Special key event callback ---------------------------------
-// To enable the use of left and right arrow keys to rotate the scene
+/**
+ * Special key event call back
+ * Allows arrow-key movement and toggling camera view between spaceship and normal
+ * @param key
+ * @param x
+ * @param y
+ */
 void special(int key, int x, int y)
 {
     double radAngle = angle * M_PI / 180;
@@ -310,6 +321,9 @@ void special(int key, int x, int y)
 }
 
 
+/**
+ * Initialise objects in scene
+ */
 void initObjects() {
     skybox = new Skybox();
     skybox->loadTextures();
@@ -319,14 +333,7 @@ void initObjects() {
     castle = new Castle(700, 300);
     castle->loadTex();
 
-    for(int i=0; i < 4;i++) {
-        castle->walls[i]->color[0] = 1.0f;
-        castle->walls[i]->color[1] = 0.65f;
-        castle->walls[i]->color[2] = 0.0f;
-        castle->walls[i]->color[3] = 1.0f;
-    }
-
-
+    // Create robots
     for (int i=0; i < 2; i++) {
         robots[i] = new Robots();
         robots[i]->patrolDistance = 0.8*castle->getLength();
@@ -334,6 +341,7 @@ void initObjects() {
         robots[i]->height *= ROBOT_SCALE;
     }
 
+    // Create cannon
     for (int i = 0; i < 4; i++) {
         cannons[i] = new Cannon();
         cannons[i]->loadMeshFile("../assets/Cannon.off");

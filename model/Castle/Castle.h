@@ -25,7 +25,6 @@ public:
     Castle(int length, int height);
     struct Wall {
         double length, x, y, z;
-        float color[4] = {0, 0, 0, 1};
     };
 
     struct Gate {

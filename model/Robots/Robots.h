@@ -9,7 +9,7 @@ using namespace std;
 class Robots {
 public:
     // Robot position changes -- use for animations
-    float deltaX = 0, deltaY = 0, deltaZ = 0, turnStep = 0,
+    double deltaX = 0, deltaY = 0, deltaZ = 0, turnStep = 0,
             turnAngle = 0, alpha = 1, patrolDistance = 0;
 
     // Robot states
