@@ -35,18 +35,16 @@ void drawFloor()
 
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 
-    //The floor is made up of several tiny squares on a 200x200 grid. Each square has a unit size.
+    //The floor is made up of several tiny squares on a 1000x1000 grid. Each square has a unit size.
     glBegin(GL_QUADS);
-    for(int i = -1000; i < 1000; i++)
-    {
-        for(int j = -1000;  j < 1000; j++)
-        {
-            glVertex3f(i, 0, j);
-            glVertex3f(i, 0, j+1);
-            glVertex3f(i+1, 0, j+1);
-            glVertex3f(i+1, 0, j);
+        for(int i = -1000; i < 1000; i++) {
+            for(int j = -1000;  j < 1000; j++) {
+                glVertex3f(i, -0.1, j);
+                glVertex3f(i, -0.1, j+1);
+                glVertex3f(i+1, -0.1, j+1);
+                glVertex3f(i+1, -0.1, j);
+            }
         }
-    }
     glEnd();
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
 }
@@ -55,7 +53,11 @@ void drawFloor()
 void display()
 {
     float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
-
+    // Shadow matrix
+    float shadowMat[16] = {lpos[1], 0, 0, 0,
+                           -lpos[0], 0, -lpos[2], -1,
+                           0, 0, lpos[1], 0,
+                           0, 0, 0, lpos[1]};
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -63,8 +65,7 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if (spaceView) {
-        gluLookAt(0, spaceship->animValues.y + 5, -200, 0,
-                -spaceship->animValues.y, 0, 0, 0, 1);
+        gluLookAt(0, spaceship->animValues.y + 5, -200, 0, -spaceship->animValues.y, 0, 0, 0, 1);
     } else {
         gluLookAt(eyeX, eyeY, eyeZ, lookX, lookY, lookZ, 0, 1, 0);
     }
@@ -73,20 +74,21 @@ void display()
 
     glColor3f(1, 0, 0);
     glPushMatrix();
-        glTranslated(-0.5*castle->getLength(), 0, 0.5*castle->getLength()+robots[0]->width-200);
+        glTranslated(-0.5*castle->getLength(), 0, 0.5*castle->getLength()+ (2 * robots[0]->width) - 200);
         glRotatef(90, 0, 1, 0);
         glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
 
         if (!robots[0]->dead) {
             robots[0]->drawRobot();
             robots[0]->x = -0.5 * castle->getLength() + robots[0]->deltaZ; // Robot's path is in Z plane but here we rotate it to X plane
-            robots[0]->z = 0.5*castle->getLength()+robots[0]->width-200;
+            robots[0]->z = 0.5*castle->getLength() + (2 * robots[0]->width) - 200;
+
+            // Spotlight
+            float spotlight[] = {robots[0]->z, robots[0]->height, robots[0]->x+2*robots[0]->z+2*robots[0]->width, 1.0f};
+            float dir[] = {-1, -1, 0.0};
+            glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
+            glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
         }
-        // Spotlight
-        float spotlight[] = {robots[0]->z, robots[0]->height, robots[0]->x+2*robots[0]->z+2*robots[0]->width, 1.0f};
-        float dir[] = {-1, -1, 0.0};
-        glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
-        glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
     glPopMatrix();
 
     glPushMatrix();
@@ -102,7 +104,7 @@ void display()
 
     glPushMatrix();
         glTranslatef(0, 0, -200);
-        //castle->drawCastle();
+        castle->drawCastle();
     glPopMatrix();
 
     glPushMatrix();
@@ -122,6 +124,31 @@ void display()
             glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
         }
     glPopMatrix();
+
+    // Spaceship shadow
+    glDisable(GL_LIGHTING);
+    glPushMatrix();
+        glMultMatrixf(shadowMat);
+        glTranslatef(0, 0, -200);
+        spaceship->texture = false;
+        spaceship->drawSpaceship();
+    glPopMatrix();
+
+    //  Invert light's position before drawing reflection
+    lpos[1] = -lpos[1];
+    glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //new position
+
+    // Draw reflection
+    glEnable(GL_LIGHTING);
+    glPushMatrix();
+        glScalef(1, -1, 1);
+        glTranslatef(0, 0, -200);
+        spaceship->texture = false;
+        spaceship->drawSpaceship();
+    glPopMatrix();
+    spaceship->texture = true;
+    lpos[1] = -lpos[1];
+    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
     glPushMatrix();
         skybox->drawSkybox();
@@ -369,10 +396,10 @@ void initialize()
 {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
 
-    glEnable(GL_LIGHTING);					//Enable OpenGL states
+    glEnable(GL_LIGHTING);	               //Enable OpenGL states
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);    // 1st Robot spotlight
-    glEnable(GL_LIGHT2);    // Spaceship booster flame spotlight
+    glEnable(GL_LIGHT1);                  // 1st Robot spotlight
+    glEnable(GL_LIGHT2);                  // Spaceship booster flame spotlight
 
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
@@ -388,7 +415,7 @@ void initialize()
 
     // Set up light 1 spot light
     glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, yellow);
     glLightfv(GL_LIGHT1, GL_SPECULAR, white);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
@@ -416,7 +443,8 @@ void initialize()
     initObjects();
 
     eyeZ = castle->getLength();
-    eyeY = 5.5;
+    eyeY = 20.5;
+    lookY = eyeY;
 }
 
 
