@@ -24,6 +24,8 @@ public:
          int patrolValue;
          int turnAroundValue;
          int dieValue;
+         int drinkValue;
+         double elbowAngle, armAngle, upperArmAngle;
      };
 
       // Width is Head radius + body radius + shoulder diameter
@@ -36,14 +38,7 @@ public:
      void drawRobot();   // Draws the actual robot
 };
 
-/**
- * Enjoy using a C-style package with a C++ program
- * Pretty much destroyed OOP and have a distaster instead
- * But hey it works...so they said about Bing
- */
-
-//Robots* robots[2] = {new Robots(), new Robots()};
-extern Robots* robots[2];
+extern Robots* robots[3];
 
 void idleAnim(int index);   // Animation for idle state
 
@@ -52,5 +47,7 @@ void patrolAnim(int index); // Animation for patrolling
 void turnAroundAnim(int index); // Animation for turning robot around
 
 void dieAnim(int index); // Animation for dying robot
+
+void drinkAnim(int index);
 
 #endif //ROBOTS_H

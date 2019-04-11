@@ -10,7 +10,7 @@
 #include <GL/freeglut.h>
 using namespace std;
 
-Robots *robots[2];
+Robots *robots[3];
 
 void Robots::drawRobot() {
     // Rotate in place by step when turning
@@ -80,7 +80,10 @@ void Robots::drawRobot() {
 
     // Upper right arm
     glPushMatrix();
-        glTranslatef(-25 + deltaX, 70 + deltaY, 0 + deltaZ);
+        glTranslated(-25 + deltaX, 105+deltaY, deltaZ);
+        glRotatef(animValues.upperArmAngle, -1, 0, 0);
+        glTranslatef(-(-25+deltaX), -(105+deltaY), -deltaZ);
+        glTranslatef(-25+deltaX, 70+deltaY, deltaZ);
         glColor4f(1, 0, 0, alpha);
         drawCylinder(5, 30);
     glPopMatrix();
@@ -95,6 +98,9 @@ void Robots::drawRobot() {
 
     // Right Elbow
     glPushMatrix();
+        glTranslated(-25 + deltaX, 105+deltaY, deltaZ);
+        glRotatef(animValues.elbowAngle, -1, 0, 0);
+        glTranslated(-(-25+deltaX), -(105+deltaY), -deltaZ);
         glTranslatef(-25 + deltaX, 65 + deltaY, 0 + deltaZ);
         glColor4f(0, 0, 1, alpha);
         drawSphere(7);
@@ -109,7 +115,11 @@ void Robots::drawRobot() {
 
     // Right arm
     glPushMatrix();
+        glTranslatef(-25 + deltaX, 105 + deltaY, 0 + deltaZ);
+        glRotatef(animValues.armAngle, -1, 0, 0);
+        glTranslatef(-(-25+deltaX), -(105 + deltaY), -deltaZ);
         glTranslatef(-25 + deltaX, 65 + deltaY, 0 + deltaZ);
+
         glColor4f(0.5, 0.5, 0.5, alpha);
         glRotatef(90, 1, 0, 0);
         drawCylinder(5, 30);
@@ -260,6 +270,22 @@ void patrolAnim(int index) {
     robot->deltaY = (robot->deltaY >= 0) ? -0.5 : 0; // Small bobbing movement for realism
     glutPostRedisplay();
     glutTimerFunc(100, patrolAnim, index);
+}
+
+
+void drinkAnim(int index) {
+    Robots *robot = robots[index];
+    int *value = &robot->animValues.drinkValue;
+    cout << " OLD " << robot->animValues.upperArmAngle << endl;
+    if (robot->animValues.upperArmAngle < 90) {
+        robot->animValues.upperArmAngle += 1;
+        robot->animValues.armAngle += 1;
+        robot->animValues.elbowAngle += 1;
+        cout << " NEW " << robot->animValues.upperArmAngle << endl;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(100, drinkAnim, index);
 }
 
 
