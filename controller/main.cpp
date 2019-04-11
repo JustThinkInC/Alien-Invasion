@@ -30,8 +30,7 @@ void drawFloor()
 {
     float white[4] = {1., 1., 1., 1.};
     float black[4] = {0};
-    glColor4d(0.13, 0.098, 0.043, 1.0);  //The floor is gray in colour
-    //glColor4f(0.7, 0.7, 0.7, 1.0);
+    glColor4d(0.13, 0.098, 0.043, 1.0);  //Shade of green to match rest of skybox textures
     glNormal3f(0.0, 1.0, 0.0);
 
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);

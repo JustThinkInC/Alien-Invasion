@@ -118,15 +118,6 @@ void Skybox::drawSkybox()
     glVertex3f(-1000, 1000, 1000); glTexCoord2f(0, 0);
     glEnd();
 
-    /////////////////////// FLOOR //////////////////////////
-    glBindTexture(GL_TEXTURE_2D, texId[5]);
-    glBegin(GL_QUADS);
-    glVertex3f(-1000, 0., 1000);  glTexCoord2f(1, 0);
-    glVertex3f(1000, 0.,  1000);  glTexCoord2f(1, 1);
-    glVertex3f(1000, 0., -1000);  glTexCoord2f(0, 1);
-    glVertex3f(-1000, 0., -1000); glTexCoord2f(0, 0);
-    glEnd();
-
-    glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
 }
