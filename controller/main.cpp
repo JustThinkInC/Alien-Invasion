@@ -141,13 +141,13 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-        glTranslated(0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+        glTranslated(0.5*castle->getLength() + (2 * robots[0]->width), 0, 0.5*castle->getLength() - 200);//0.5*castle->getLength()+5);
         glRotatef(180, 0, 1, 0);
         glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
         if (!robots[1]->dead) {
             robots[1]->drawRobot();
-            robots[1]->x = 0.5 * castle->getLength() + robots[1]->deltaX;
-            robots[1]->z = 0.5 * castle->getLength() + 5 + robots[1]->deltaZ;
+            robots[1]->x = 0.5*castle->getLength() + (2 * robots[0]->width) + robots[1]->deltaX;
+            robots[1]->z = 0.5*castle->getLength() - 200 + robots[1]->deltaZ;
         }
     glPopMatrix();
 
@@ -214,12 +214,10 @@ bool collisionCheck(bool down) {
         double posX = robots[i]->x;
         double width = robots[i]->width;
         double posZ = robots[i]->z;
-        xCol = ((posX - width) == newX) || (newX == (posX + width));
-        zCol = ((posZ - width) == newZ) || (newZ == (posZ + width));
+        xCol = ((posX - width) <= newX) && (newX <= (posX + width));
+        zCol = ((posZ - width) <= newZ) && (newZ <= (posZ + width));
 
         if (xCol && zCol) {
-            cout << "-X " << robots[i]->x - robots[i]->width << " +X " << (robots[i]->x + robots[i]->width) << " newC" << newX << " oldC " << eyeX << " -Z " << (robots[i]->z - robots[i]->width) << " +Z " << (robots[i]->z + robots[i]->width) << endl;
-            cout << "ROBOT COLLISION" << endl;
             return true;
         }
     }
