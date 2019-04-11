@@ -28,7 +28,7 @@ public:
     };
 
     struct Gate {
-        double width, x, y, z;
+        double length, width, x, y, z;
         bool open = false, opening = false, closed = true, closing = false;
         int angle = 0;
     };

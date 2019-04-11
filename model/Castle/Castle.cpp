@@ -264,15 +264,17 @@ void Castle::drawCastle() {
 
     // Gate
     glPushMatrix();
-        glTranslated(xFront/2, 40, 0.5 * length);
+        glTranslated(0, 40, 0.5 * length - ((0.5 * length) / 10));
         glRotated(gate.angle, 1, 0, 0);
-        glTranslated(xFront/2, 40, (0.5 * length)/10);//12);
-        glScaled(0.4, 1, 5.0 / length);
+        glTranslated(0, 40, (0.5 * length)/10);//12);
+
+        glScaled(0.38, 1, 5.0 / length);
         drawGate(height * 1.4);
         gate.x = xFront / 2;
         gate.y = 40;
-        gate.z = -0.5 * length;
+        gate.z = 0.5 * length - ((0.5 * length) / 10);
         gate.width = gateWidth;
+        gate.length = height * 1.4 - 80;
     glPopMatrix();
 
     // Front Right pillar
