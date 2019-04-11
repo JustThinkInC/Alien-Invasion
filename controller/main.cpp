@@ -30,8 +30,8 @@ void drawFloor()
 {
     float white[4] = {1., 1., 1., 1.};
     float black[4] = {0};
-    //glColor4d(0.13, 0.098, 0.043, 1.0);  //The floor is gray in colour
-    glColor4f(0.7, 0.7, 0.7, 1.0);
+    glColor4d(0.13, 0.098, 0.043, 1.0);  //The floor is gray in colour
+    //glColor4f(0.7, 0.7, 0.7, 1.0);
     glNormal3f(0.0, 1.0, 0.0);
 
     glMaterialfv(GL_FRONT, GL_SPECULAR, black);
@@ -115,6 +115,13 @@ void display()
     glPushMatrix();
         glTranslatef(0, 0, -200);
         spaceship->drawSpaceship();
+        if (spaceship->isFlying()) {
+            // Spotlight
+            float flameLight[] = {200, spaceship->getBodyHeight(), spaceship->getRadius(), 1.0f};
+            float lightDir[] = {-1, -1, 0.0};
+            glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDir);
+            glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
+        }
     glPopMatrix();
 
     glPushMatrix();
@@ -365,7 +372,8 @@ void initialize()
 
     glEnable(GL_LIGHTING);					//Enable OpenGL states
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
+    glEnable(GL_LIGHT1);    // 1st Robot spotlight
+    glEnable(GL_LIGHT2);    // Spaceship booster flame spotlight
 
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_DEPTH_TEST);
@@ -377,19 +385,29 @@ void initialize()
 
     float grey[4] = {0.2, 0.2, 0.2, 0.2};
     float white[4]  = {0.5, 0.5, 0.5, 0.5};
+    float yellow[4]  = {1, 1, 0.2, 1};
+
+    // Set up light 1 spot light
     glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
     glLightfv(GL_LIGHT1, GL_SPECULAR, white);
-
-    // Spotlight stuff
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-    glMaterialf(GL_FRONT, GL_SHININESS, 50);
-
-    // New light source for spotlight
+    glMaterialf(GL_FRONT, GL_SHININESS, 100);
     glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
     glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 0.01);
+
+    // Set up light 2 spot light
+    glLightfv(GL_LIGHT2, GL_AMBIENT, grey);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, yellow);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, yellow);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, yellow);
+    glMaterialf(GL_FRONT, GL_SHININESS, 100);
+    glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 30.0);
+    glLightf(GL_LIGHT2, GL_SPOT_EXPONENT, 0.01);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
