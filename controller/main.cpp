@@ -30,33 +30,35 @@ void drawFloor()
 {
     float white[4] = {1., 1., 1., 1.};
     float black[4] = {0};
-    glColor4f(0.7, 0.7, 0.7, 1.0);  //The floor is gray in colour
+    //glColor4d(0.13, 0.098, 0.043, 1.0);  //The floor is gray in colour
+    glColor4f(0.7, 0.7, 0.7, 1.0);
     glNormal3f(0.0, 1.0, 0.0);
 
-    //glMaterialfv(GL_FRONT, GL_SPECULAR, black);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, black);
 
     //The floor is made up of several tiny squares on a 200x200 grid. Each square has a unit size.
     glBegin(GL_QUADS);
-    for(int i = -500; i < 500; i++)
+    for(int i = -1000; i < 1000; i++)
     {
-        for(int j = -500;  j < 500; j++)
+        for(int j = -1000;  j < 1000; j++)
         {
-            glVertex3f(i, -10, j);
-            glVertex3f(i, -10, j+1);
-            glVertex3f(i+1, -10, j+1);
-            glVertex3f(i+1, -10, j);
+            glVertex3f(i, 0, j);
+            glVertex3f(i, 0, j+1);
+            glVertex3f(i+1, 0, j+1);
+            glVertex3f(i+1, 0, j);
         }
     }
     glEnd();
-    //glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, white);
 }
 
 
 void display()
 {
-    float lpos[4] = {100., 100., 100., 1.0};  //light's position
+    float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    //GL_LINE = Wireframe;   GL_FILL = Solid
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
@@ -72,21 +74,20 @@ void display()
 
     glColor3f(1, 0, 0);
     glPushMatrix();
-        glTranslated(-0.5*castle->getLength(), castle->getHeight(), 0.5*castle->getLength()+5);
+        glTranslated(-0.5*castle->getLength(), 0, 0.5*castle->getLength()+robots[0]->width-200);
         glRotatef(90, 0, 1, 0);
         glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
-        glPushMatrix();
-            glRotatef(-90, 0, -1, 0);
-            float dir[] = {-1, -1, 0};
-            float spotlight[] = {-robots[0]->deltaZ-10, robots[0]->deltaY, robots[0]->deltaX+10, 1.0f};
-            // glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
-            //glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
-        glPopMatrix();
+
         if (!robots[0]->dead) {
             robots[0]->drawRobot();
-            robots[0]->x = -0.5 * castle->getLength() + robots[0]->deltaX;
-            robots[0]->z = 0.5 * castle->getLength() + 5 + robots[0]->deltaZ;
+            robots[0]->x = -0.5 * castle->getLength() + robots[0]->deltaZ; // Robot's path is in Z plane but here we rotate it to X plane
+            robots[0]->z = 0.5*castle->getLength()+robots[0]->width-200;
         }
+        // Spotlight
+        float spotlight[] = {robots[0]->z, robots[0]->height, robots[0]->x+2*robots[0]->z+2*robots[0]->width, 1.0f};
+        float dir[] = {-1, -1, 0.0};
+        glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
+        glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
     glPopMatrix();
 
     glPushMatrix();
@@ -102,7 +103,7 @@ void display()
 
     glPushMatrix();
         glTranslatef(0, 0, -200);
-        castle->drawCastle();
+        //castle->drawCastle();
     glPopMatrix();
 
     glPushMatrix();
@@ -140,7 +141,6 @@ void display()
     glPopMatrix();
 
     glutSwapBuffers();
-    glFlush();
 }
 
 
@@ -266,8 +266,7 @@ void keyboard(unsigned char key, int x, int y) {
  * @param x
  * @param y
  */
-void special(int key, int x, int y)
-{
+void special(int key, int x, int y) {
     double radAngle = angle * M_PI / 180;
 
     if (key == GLUT_KEY_LEFT) {
@@ -279,10 +278,10 @@ void special(int key, int x, int y)
         radAngle = angle * M_PI / 180;
     }
     else if (key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
-        eyeY += 1 * cos(radAngle);
+        eyeY += stepSpeed * cos(radAngle);
     }
     else if (key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-        eyeY -= 1 * cos(radAngle);
+        eyeY -= stepSpeed * cos(radAngle);
     }
     else if (key == GLUT_KEY_UP && !collisionCheck(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX += stepSpeed * sin(radAngle);
@@ -381,6 +380,16 @@ void initialize()
     glLightfv(GL_LIGHT1, GL_AMBIENT, grey);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, white);
     glLightfv(GL_LIGHT1, GL_SPECULAR, white);
+
+    // Spotlight stuff
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, white);
+    glMaterialf(GL_FRONT, GL_SHININESS, 50);
+
+    // New light source for spotlight
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
+    glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 0.01);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
