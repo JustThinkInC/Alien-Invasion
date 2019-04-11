@@ -205,26 +205,26 @@ void Castle::drawCastle() {
 
     static double gateWidth = 0.4 * height * 1.4;
 
-    // Front wall left half
+    // Front wall right half
     glPushMatrix();
         glTranslated(gateWidth*1.3, yLevel, 0.5 * length);
         glScaled(0.4, ((float) height) / length, 10.0 / length);
         drawWall();
-        walls[0]->x = gateWidth*1.5;
+        walls[0]->x = gateWidth*1.3;
         walls[0]->y = yLevel;
         walls[0]->z = 0.5 * length;
-        walls[0]->length = 0.3 * length;
+        walls[0]->length = 0.4 * length;
     glPopMatrix();
 
-    // Front wall right half
+    // Front wall left half
     glPushMatrix();
         glTranslated(-gateWidth*1.3, yLevel, 0.5*length);
         glScaled(0.4, ((float) height)/length, 10.0/length);
         drawWall();
-        walls[1]->x = -gateWidth*1.5;
+        walls[1]->x = -gateWidth*1.4;
         walls[1]->y = yLevel;
         walls[1]->z = 0.5 * length;
-        walls[1]->length = 0.3 * length;
+        walls[1]->length = 0.4 * length;
     glPopMatrix();
 
     // Right wall
