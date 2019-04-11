@@ -271,7 +271,7 @@ bool collisionCheck(bool down) {
  */
 bool gateOpenable() {
     bool xCol = (-0.5 * castle->gate.width <= eyeX) && (eyeX <= 0.5 * castle->gate.width);
-    bool zCol = (castle->gate.z - 200 - 0.5 *castle->gate.length <= eyeZ) && (eyeZ <= castle->gate.z - 200 + castle->gate.length);
+    bool zCol = (castle->gate.z - 200 <= eyeZ) && (eyeZ <= castle->gate.z - 200 + castle->gate.length);
     if (xCol && zCol) {
         return false;
     }
