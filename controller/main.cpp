@@ -20,6 +20,8 @@ static float angle = 0.0;  //Rotation angle for viewing
 static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 10;
 static bool spaceView = false;
 static double minBoundary = -950, maxBoundary = 950;
+static float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
+
 
 Castle* castle;
 Skybox* skybox;
@@ -49,16 +51,63 @@ void drawFloor()
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
 }
 
-
-void display()
-{
-    float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
+/**
+ * Render spaceship and shadow
+ */
+void renderSpaceship() {
     // Shadow matrix
     float shadowMat[16] = {lpos[1], 0, 0, 0,
                            -lpos[0], 0, -lpos[2], -1,
                            0, 0, lpos[1], 0,
                            0, 0, 0, lpos[1]};
 
+    glPushMatrix();
+    glTranslatef(0, 0, -200);
+    // Stop drawing near the time the boosters turn off
+    if (spaceship->animValues.y < 1.5 * maxBoundary) {
+        spaceship->drawSpaceship();
+        if (spaceship->isFlying()) {
+            // Spotlight
+            float flameLight[] = {200, spaceship->getBodyHeight(), spaceship->getRadius(), 1.0f};
+            float lightDir[] = {-1, -1, 0.0};
+            glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDir);
+            glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
+        }
+    }
+    glPopMatrix();
+
+    // Only draw shadow & reflection if spaceship in world's space
+    if (spaceship->animValues.y < maxBoundary / 2 + 50) {
+        // Spaceship shadow
+        glDisable(GL_LIGHTING);
+        glPushMatrix();
+            glMultMatrixf(shadowMat);
+            glTranslatef(0, 0, -200);
+            spaceship->texture = false;
+            spaceship->drawSpaceship();
+        glPopMatrix();
+
+        //  Invert light's position before drawing reflection
+        lpos[1] = -lpos[1];
+        glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //new position
+
+        // Draw reflection
+        glEnable(GL_LIGHTING);
+        glPushMatrix();
+            glScalef(1, -1, 1);
+            glTranslatef(0, 0, -200);
+            spaceship->texture = false;
+            spaceship->drawSpaceship();
+        glPopMatrix();
+        spaceship->texture = true;
+        lpos[1] = -lpos[1];
+        glLightfv(GL_LIGHT0, GL_POSITION, lpos);
+    }
+}
+
+
+void display()
+{
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -108,47 +157,12 @@ void display()
     glPopMatrix();
 
     glPushMatrix();
-        glTranslatef(0,  0, -150);
+        glTranslatef(100,  0, -150);
         glScalef(2, 2, 2);
         cannons[0]->drawCannon();
     glPopMatrix();
 
-    glPushMatrix();
-        glTranslatef(0, 0, -200);
-        spaceship->drawSpaceship();
-        if (spaceship->isFlying()) {
-            // Spotlight
-            float flameLight[] = {200, spaceship->getBodyHeight(), spaceship->getRadius(), 1.0f};
-            float lightDir[] = {-1, -1, 0.0};
-            glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDir);
-            glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
-        }
-    glPopMatrix();
-
-    // Spaceship shadow
-    glDisable(GL_LIGHTING);
-    glPushMatrix();
-        glMultMatrixf(shadowMat);
-        glTranslatef(0, 0, -200);
-        spaceship->texture = false;
-        spaceship->drawSpaceship();
-    glPopMatrix();
-
-    //  Invert light's position before drawing reflection
-    lpos[1] = -lpos[1];
-    glLightfv(GL_LIGHT0, GL_POSITION, lpos);   //new position
-
-    // Draw reflection
-    glEnable(GL_LIGHTING);
-    glPushMatrix();
-        glScalef(1, -1, 1);
-        glTranslatef(0, 0, -200);
-        spaceship->texture = false;
-        spaceship->drawSpaceship();
-    glPopMatrix();
-    spaceship->texture = true;
-    lpos[1] = -lpos[1];
-    glLightfv(GL_LIGHT0, GL_POSITION, lpos);
+    renderSpaceship();
 
     glPushMatrix();
         skybox->drawSkybox();
@@ -231,6 +245,15 @@ bool collisionCheck(bool down) {
         }
     }
 
+    // Collision check with gate
+    if (!castle->gate.open) {
+        xCol = (-0.5 * castle->gate.width <= newX) && (newX <= 0.5 * castle->gate.width);
+        zCol = (castle->gate.z - 200 - 100 <= newZ) && (newZ <= castle->gate.z - 200 + 100);
+        if (xCol && zCol) {
+            return true;
+        }
+    }
+
     // Check collision with spaceship
     // Note that the player can move under the spaceship if it has taken off
     xCol = (-spaceship->getRadius() - 10 <= newX) && (newX <= spaceship->getRadius() + 10);
@@ -245,6 +268,19 @@ bool collisionCheck(bool down) {
 
 
 /**
+ * Check if gate can be opened without crushing player
+ * @return
+ */
+bool gateOpenable() {
+    bool xCol = (-0.5 * castle->gate.width <= eyeX) && (eyeX <= 0.5 * castle->gate.width);
+    bool zCol = (castle->gate.z - 200 - 0.5 *castle->gate.length <= eyeZ) && (eyeZ <= castle->gate.z - 200 + castle->gate.length);
+    if (xCol && zCol) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * The keyboard function event
  * @param key Key pressed
  * @param x Mouse X position
@@ -252,7 +288,7 @@ bool collisionCheck(bool down) {
  */
 void keyboard(unsigned char key, int x, int y) {
     switch (key) {
-        case 'p':
+        case 'p':   // Command all robots to patrol
             if (!robots[0]->moving) {
                 glutTimerFunc(100, patrolAnim, 0);
 
@@ -261,8 +297,7 @@ void keyboard(unsigned char key, int x, int y) {
                 glutTimerFunc(100, patrolAnim, 1);
             }
             break;
-        case 'd':
-            // Remove 1 robot at a time
+        case 'd':   // Destroy a robot 1 at a time
             if (!robots[0]->dying && !robots[0]->dead) {
                 glutTimerFunc(100, dieAnim, 0);
             }
@@ -270,19 +305,20 @@ void keyboard(unsigned char key, int x, int y) {
                 glutTimerFunc(100, dieAnim, 1);
             }
             break;
-        case 'c':
+        case 'c':   // Fire cannon
             if (!cannons[0]->firing) {
                 glutTimerFunc(100, fireCannonAnim, 0);
             }
             break;
-        case 'u':
+        case 'o':   // Open castle gate
+            if (!gateOpenable()) return; // Check if gate can be opened
             if (castle->gate.closed && !castle->gate.opening) {
                 glutTimerFunc(100, castle->openGateAnim, castle->gate.angle);
             } else if (castle->gate.open && !castle->gate.closing) {
                 glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
             }
             break;
-        case 's':
+        case 's':   // Initiate spaceship flight
             if (spaceship->isGrounded()) {
                 glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
             }
