@@ -11,8 +11,8 @@ Spaceship::AnimValues Spaceship::animValues;
 Spaceship::Spaceship(int radius) {
     this->radius = radius;
     this->boosterRadius = 0.4 * radius;
+    this->bodyHeight = 3 * radius;
     animValues.takeOffValue = 0;
-    animValues.dieValue = 0;
     animValues.grounded = true;
 
     animValues.x = 0;
@@ -41,20 +41,19 @@ void Spaceship::loadTex() {
 }
 
 
-int Spaceship::getHealth() {
-    return this->health;
-}
-
-
-void Spaceship::setRadius(int radius) {
+void Spaceship::setRadius(double radius) {
     this->radius = radius;
 }
 
 
-int Spaceship::getRadius() {
+double Spaceship::getRadius() {
     return this->radius;
 }
 
+
+double Spaceship::getBodyHeight() {
+    return this->bodyHeight;
+}
 
 bool Spaceship::isGrounded() {
     return this->animValues.grounded;
@@ -112,6 +111,11 @@ void Spaceship::drawFlameParticle() {
 }
 
 
+/**
+ * Draws 4 boosters for the spaceship
+ * Each is positioned in the centre of a
+ * quadrant of the base
+ */
 void Spaceship::drawBoosters() {
     //Boosters
     float xDir = 1;

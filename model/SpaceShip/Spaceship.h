@@ -12,15 +12,16 @@
 class Spaceship {
 
 private:
-    int health = 100, radius = 50;
+    double radius = 50, bodyHeight = 150;
     double boosterRadius = 20;
     void checkAlive();
     GLuint texIds[2];
 
 public:
-    int getRadius();
+    double getRadius();
+    double getBodyHeight();
     int getHealth();
-    void setRadius(int radius);
+    void setRadius(double radius);
     void takeDamage(); //Default damage amount
     void takeDamage(int damage);
     void loadTex();
@@ -30,10 +31,8 @@ public:
     void drawWingTips();
     void drawSpaceship();
     bool isGrounded();
-
     struct AnimValues {
         int takeOffValue;
-        int dieValue;
         bool grounded;
         float x, y, z;
     };
