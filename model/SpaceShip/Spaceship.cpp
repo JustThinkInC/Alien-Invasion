@@ -18,6 +18,8 @@ Spaceship::Spaceship(int radius) {
     animValues.x = 0;
     animValues.y = 0;
     animValues.z = 0;
+
+    this->texture = true;
 }
 
 
@@ -67,22 +69,24 @@ bool Spaceship::isFlying() {
  * Draw a single flame particle and texture it for booster
  */
 void Spaceship::drawFlameParticle() {
-    glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
+    if (texture) {
+        glDisable(GL_LIGHTING);
+        glEnable(GL_TEXTURE_2D);
 
-    glBindTexture(GL_TEXTURE_2D, texIds[1]);
-
+        glBindTexture(GL_TEXTURE_2D, texIds[1]);
+    }
     // Use a triangle to create a nicer flame effect
     glBegin(GL_TRIANGLES);
-        glVertex3f(0, 1, 0);        glTexCoord2f(1, 0);
-        glVertex3f(1, 1, 0);        glTexCoord2f(0, 1);
-        glVertex3f(0.5, 0, 0);        glTexCoord2f(1, 1);
+        glVertex3f(0, 1, 0);       if(texture) glTexCoord2f(1, 0);
+        glVertex3f(1, 1, 0);       if(texture) glTexCoord2f(0, 1);
+        glVertex3f(0.5, 0, 0);     if(texture) glTexCoord2f(1, 1);
     glEnd();
 
-    glTexCoord2f(0, 0);
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
+    if (texture) {
+        glTexCoord2f(0, 0);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LIGHTING);
+    }
 }
 
 
@@ -164,70 +168,72 @@ void Spaceship::drawFlames() {
  * Draw the wing tips and texture them
  */
 void Spaceship::drawWingTips() {
-    glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, texIds[0]);
+   if (texture) {
+       glDisable(GL_LIGHTING);
+       glEnable(GL_TEXTURE_2D);
+       glBindTexture(GL_TEXTURE_2D, texIds[0]);
+   }
     glBegin(GL_TRIANGLES);
         // Right wing tip
-        glTexCoord2f(1,  0);    glVertex3f(radius, 10+animValues.y, 0);
-        glTexCoord2f(1, 1);     glVertex3f(radius, 30+animValues.y, 0);
-        glTexCoord2f(0, 1);     glVertex3f(radius+20, 10+animValues.y, 0);
+        if(texture) {glTexCoord2f(1, 0);}    glVertex3f(radius, 10+animValues.y, 0);
+        if(texture) {glTexCoord2f(1, 1);}    glVertex3f(radius, 30+animValues.y, 0);
+        if(texture) {glTexCoord2f(0, 1);}    glVertex3f(radius+20, 10+animValues.y, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Left wing tip
-        glTexCoord2f(1,  0);    glVertex3f(-radius, 10+animValues.y, 0);
-        glTexCoord2f(1, 1);     glVertex3f(-radius, 30+animValues.y, 0);
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20), 10+animValues.y, 0);
+        if(texture) {glTexCoord2f(1, 0);}    glVertex3f(-radius, 10+animValues.y, 0);
+        if(texture) {glTexCoord2f(1, 1);}    glVertex3f(-radius, 30+animValues.y, 0);
+        if(texture) {glTexCoord2f(0, 1);}    glVertex3f(-(radius+20), 10+animValues.y, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Front wing tip
-        glTexCoord2f(1, 0);    glVertex3f(0, 10+animValues.y,  radius);
-        glTexCoord2f(1, 1);    glVertex3f(0, 30+animValues.y,  radius);
-        glTexCoord2f(0, 1);    glVertex3f(0, 10+animValues.y, radius+20);
+        if(texture) {glTexCoord2f(1, 0);}    glVertex3f(0, 10+animValues.y,  radius);
+        if(texture) {glTexCoord2f(1, 1);}    glVertex3f(0, 30+animValues.y,  radius);
+        if(texture) {glTexCoord2f(0, 1);}    glVertex3f(0, 10+animValues.y, radius+20);
     glEnd();
 
     glBegin(GL_TRIANGLES);
         //Rear wing tip
-        glTexCoord2f(1, 0);     glVertex3f(0, 10+animValues.y, -radius);
-        glTexCoord2f(1, 1);     glVertex3f(0, 30+animValues.y, -radius);
-        glTexCoord2f(0, 1);     glVertex3f(0, 10+animValues.y, -(radius+20));
+        if(texture) {glTexCoord2f(1, 0);}     glVertex3f(0, 10+animValues.y, -radius);
+        if(texture) {glTexCoord2f(1, 1);}     glVertex3f(0, 30+animValues.y, -radius);
+        if(texture) {glTexCoord2f(0, 1);}     glVertex3f(0, 10+animValues.y, -(radius+20));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between right and front (SE)
-        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 0);}     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 1);}     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(0, 1);}     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between left and front (SW)
-        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 0);}     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 1);}     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(0, 1);}     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, (radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between right and back (NE)
-        glTexCoord2f(1, 0);     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 0);}     glVertex3f(radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 1);}     glVertex3f(radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(0, 1);}     glVertex3f((radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
     glEnd();
 
     glBegin(GL_TRIANGLES);
         // Wing tip between left and back (NW)
-        glTexCoord2f(1, 0);     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
-        glTexCoord2f(1, 1);     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
-        glTexCoord2f(0, 1);     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 0);}     glVertex3f(-radius*cos(45*M_PI/180), 10+animValues.y, -radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(1, 1);}     glVertex3f(-radius*cos(45*M_PI/180), 30+animValues.y, -radius*sin(45*M_PI/180));
+        if(texture) {glTexCoord2f(0, 1);}     glVertex3f(-(radius+20)*cos(45*M_PI/180), 10+animValues.y, -(radius+20)*sin(45*M_PI/180));
     glEnd();
 
-    glTexCoord2f(0, 0);
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
+    if(texture) {
+        glTexCoord2f(0, 0);
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LIGHTING);
+    }
 }
 
 
@@ -238,31 +244,34 @@ void Spaceship::drawSpaceship() {
     //Body
     glPushMatrix();
         glTranslatef(0, 10+animValues.y, 0);
-        glColor4f(0.96, 0.79, 0.65, 1);
+        if (!texture) glColor4f(0.18, 0.18, 0.18, 1);
         drawCylinder(radius, 3*radius);
     glPopMatrix();
 
     // Top part
     glPushMatrix();
         glTranslatef(0, radius*3+10+animValues.y, 0);
-        glColor4f(0.96, 0.79, 0.65, 1);
+        if (!texture) glColor4f(0.18, 0.18, 0.18, 1);
         drawCone(radius, radius);
     glPopMatrix();
 
     //Wing tips
     glPushMatrix();
+        if (!texture) glColor4f(0.18, 0.18, 0.18, 1);
         drawWingTips();
     glPopMatrix();
 
     // Boosters
     glPushMatrix();
+        if (!texture) glColor4f(0.18, 0.18, 0.18, 1);
         drawBoosters();
     glPopMatrix();
 
     // Render the flames
     if (animValues.takeOffValue < FLIGHT_TIME && !animValues.grounded) {
         glPushMatrix();
-          drawFlames();
+            if (!texture) glColor4f(0.18, 0.18, 0.18, 1);
+            drawFlames();
         glPopMatrix();
     }
 }

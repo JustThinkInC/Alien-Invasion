@@ -38,6 +38,7 @@ public:
         bool flying;
         float x, y, z;
     };
+    bool texture;
 
     static struct AnimValues animValues;
 
