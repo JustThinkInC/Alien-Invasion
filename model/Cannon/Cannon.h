@@ -16,7 +16,6 @@ private:
 public:
     float cannonX, cannonY, cannonZ, tilt = 0;
     double cannonBallX = 0, cannonBallY = 0, cannonBallZ = 0, sy = -1, cannonYOffset = 0, cannonZOffset = 0;
-    bool smoke = false;
     bool firing = false;
 
     int firingValue = 0;

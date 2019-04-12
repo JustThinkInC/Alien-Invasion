@@ -8,7 +8,9 @@ using namespace std;
 
 Cannon* cannons[4];
 
-
+/**
+ * Set up the cannon ball
+ */
 void Cannon::setCannonBall() {
     float theta = (tilt * M_PI) / 180;
     cannonBallX = cannonX;
@@ -19,7 +21,10 @@ void Cannon::setCannonBall() {
 }
 
 
-//-- Loads mesh data in OFF format    -------------------------------------
+/**
+ * Loads mesh data in OFF format
+ * @param fname
+ */
 void Cannon::loadMeshFile(const char* fname)
 {
 	ifstream fp_in;
@@ -61,7 +66,9 @@ void Cannon::loadMeshFile(const char* fname)
 }
 
 
-//--Function to compute the normal vector of a triangle with index tindx ----------
+/**
+ * Function to compute the normal vector of a triangle with index tindx
+ */
 void Cannon::normal(int tindx)
 {
 	float x1 = x[t1[tindx]], x2 = x[t2[tindx]], x3 = x[t3[tindx]];
@@ -75,7 +82,9 @@ void Cannon::normal(int tindx)
 }
 
 
-//--------draws the mesh model of the cannon----------------------------
+/**
+ * Draw the cannon
+ */
 void Cannon::drawCannon()
 {
 	glColor3f(0.1, 0.1, 0.1);//0.4, 0.5, 0.4);
@@ -140,42 +149,11 @@ void Cannon::drawCannon()
 }
 
 
-//void display()
-//{
-//    //--start here
-//    // First bracket set
-//    glPushMatrix();
-//        glTranslatef(-10, 5, 17);
-//        glScalef(80*0.5, 10*0.5, 6*0.5);
-//        glColor3f(1, 0.64, 0);
-//        glutSolidCube(1);
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//        glTranslatef(-20, 15, 17);//glTranslatef(-20, 25, 17);
-//        glScalef(40*0.5, 30*0.5, 6*0.5);
-//        glColor3f(1, 0.64, 0);
-//        glutSolidCube(1);
-//    glPopMatrix();
-//
-//    // Second bracket set
-//    glPushMatrix();
-//        glTranslatef(-10, 5, -17);
-//        glScalef(80*0.5, 10*0.5, 6*0.5);
-//        glColor3f(1, 0.64, 0);
-//        glutSolidCube(1);
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//        glTranslatef(-20, 15, -17);//glTranslatef(-20, 25, -17);
-//        glScalef(40*0.5, 30*0.5, 6*0.5);
-//        glColor3f(1, 0.64, 0);
-//        glutSolidCube(1);
-//    glPopMatrix();
-//}
-
-
-
+/**
+ * Animation to fire cannon
+ * Uses the physics formula of projectile trajectory
+ * @param index
+ */
 void fireCannonAnim(int index) {
     Cannon* cannon = cannons[index];
     cannon->firing = true;
