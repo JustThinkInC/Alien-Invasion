@@ -106,6 +106,9 @@ void renderSpaceship() {
 }
 
 
+/**
+ * Handle display of all scene objects
+ */
 void display()
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -121,7 +124,8 @@ void display()
 
     glLightfv(GL_LIGHT0, GL_POSITION, lpos);
 
-    glColor3f(1, 0, 0);
+    //glColor3f(1, 0, 0);
+    // Robot 1
     glPushMatrix();
         glTranslated(-0.5*castle->getLength(), 0, 0.5*castle->getLength()+ (2 * robots[0]->width) - 200);
         glRotatef(90, 0, 1, 0);
@@ -140,6 +144,7 @@ void display()
         }
     glPopMatrix();
 
+    // Robot 2
     glPushMatrix();
         glTranslated(0.5*castle->getLength() + (2 * robots[0]->width), 0, 0.5*castle->getLength() - 200);//0.5*castle->getLength()+5);
         glRotatef(180, 0, 1, 0);
@@ -148,6 +153,29 @@ void display()
             robots[1]->drawRobot();
             robots[1]->x = 0.5*castle->getLength() + (2 * robots[0]->width) + robots[1]->deltaX;
             robots[1]->z = 0.5*castle->getLength() - 200 + robots[1]->deltaZ;
+        }
+    glPopMatrix();
+
+    // Robot 3 - drinking wine
+    glPushMatrix();
+        robots[2]->x = -8 * spaceship->getRadius() + robots[2]->deltaX;
+        robots[2]->z = -200 - (castle->getLength() * 0.5) + robots[2]->deltaZ + 20;
+        glTranslated(robots[2]->x, 0, robots[2]->z);
+        glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
+        if (!robots[2]->dead) {
+            robots[2]->drawRobot();
+            robots[2]->drink = true;
+        }
+    glPopMatrix();
+
+    // Robot 4 - dancing
+    glPushMatrix();
+        robots[3]->x = 8 * spaceship->getRadius() + robots[2]->deltaX;
+        robots[3]->z = -200 - (castle->getLength() * 0.5) + robots[2]->deltaZ + 30;
+        glTranslated(robots[3]->x, 0, robots[3]->z);
+        glScalef(ROBOT_SCALE, ROBOT_SCALE, ROBOT_SCALE);
+        if (!robots[3]->dead) {
+            robots[3]->drawRobot();
         }
     glPopMatrix();
 
@@ -168,17 +196,8 @@ void display()
         skybox->drawSkybox();
     glPopMatrix();
 
-
     glPushMatrix();
         drawFloor();
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(17, 10, 250);
-        glColor4f(0.8, 0.93, 1, 0.25);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        drawWineGlass(true);
     glPopMatrix();
 
     glPushMatrix();
@@ -252,6 +271,16 @@ bool collisionCheck(bool down) {
         }
     }
 
+    // Collision check with cannon
+    //        glTranslatef(100,  0, -150);
+    xCol = (70 <= newX) && (newX <= 130);
+    zCol = (cannons[0]->cannonZ + cannons[0]->getLength() - 10 <= newZ) && (newZ <= cannons[0]->cannonZ + 75 + cannons[0]->getLength());
+    //cout << "X " << xCol << " Z " << zCol << " NZ " << newZ <<  " NX " << newX << " CAZ " << cannons[0]->cannonZ << " CAX " << cannons[0]->cannonX << endl;
+    if (xCol && zCol) {
+      //  cout << "CANNON " << cannons[0]->getLength() << endl;
+        return true;
+    }
+
     // Check collision with spaceship
     // Note that the player can move under the spaceship if it has taken off
     xCol = (-spaceship->getRadius() - 10 <= newX) && (newX <= spaceship->getRadius() + 10);
@@ -271,7 +300,7 @@ bool collisionCheck(bool down) {
  */
 bool gateOpenable() {
     bool xCol = (-0.5 * castle->gate.width <= eyeX) && (eyeX <= 0.5 * castle->gate.width);
-    bool zCol = (castle->gate.z - 200 <= eyeZ) && (eyeZ <= castle->gate.z - 200 + castle->gate.length);
+    bool zCol = (castle->gate.z - 200 <= eyeZ) && (eyeZ <= castle->gate.z - 200 + 0.5 * castle->gate.length);
     if (xCol && zCol) {
         return false;
     }
@@ -295,7 +324,7 @@ void keyboard(unsigned char key, int x, int y) {
                 glutTimerFunc(100, patrolAnim, 1);
             }
             break;
-        case 'd':   // Destroy a robot 1 at a time
+        case 'r':   // Destroy a robot 1 at a time
             if (!robots[0]->dying && !robots[0]->dead) {
                 glutTimerFunc(100, dieAnim, 0);
             }
@@ -316,6 +345,17 @@ void keyboard(unsigned char key, int x, int y) {
                 glutTimerFunc(100, castle->closeGateAnim, castle->gate.angle);
             }
             break;
+        case 'e':
+            if (robots[2]->animValues.drinkValue == 0) {
+                glutTimerFunc(100, drinkAnim, 2);
+            } else if (robots[2]->animValues.drinkValue == 90){
+                glutTimerFunc(100, stopDrinkAnim, 2);
+            }
+            break;
+        case 'd':
+            if (!robots[3]->dancing) {
+                glutTimerFunc(100, danceAnim, 3);
+            }
         case 's':   // Initiate spaceship flight
             if (spaceship->isGrounded()) {
                 glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
@@ -400,7 +440,7 @@ void initObjects() {
     castle->loadTex();
 
     // Create robots
-    for (int i=0; i < 2; i++) {
+    for (int i=0; i < sizeof(robots) / sizeof(robots[0]); i++) {
         robots[i] = new Robots();
         robots[i]->patrolDistance = 0.8*castle->getLength();
         robots[i]->width *= ROBOT_SCALE;
