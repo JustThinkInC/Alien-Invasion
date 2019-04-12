@@ -8,9 +8,10 @@
 #include "../Shapes/Shapes.h"
 #include <math.h>
 #include <GL/freeglut.h>
+#include "../Pottery/Pottery.h"
 using namespace std;
 
-Robots *robots[3];
+Robots *robots[4];
 
 void Robots::drawRobot() {
     // Rotate in place by step when turning
@@ -81,7 +82,7 @@ void Robots::drawRobot() {
     // Upper right arm
     glPushMatrix();
         glTranslated(-25 + deltaX, 105+deltaY, deltaZ);
-        glRotatef(animValues.upperArmAngle, -1, 0, 0);
+        glRotatef(animValues.upperRightArmAngle, -1, 0, 0);
         glTranslatef(-(-25+deltaX), -(105+deltaY), -deltaZ);
         glTranslatef(-25+deltaX, 70+deltaY, deltaZ);
         glColor4f(1, 0, 0, alpha);
@@ -91,6 +92,9 @@ void Robots::drawRobot() {
 
     // Upper left arm
     glPushMatrix();
+        glTranslated(25 + deltaX, 105+deltaY, deltaZ);
+        glRotatef(animValues.upperLeftArmAngle, -1, 0, 0);
+        glTranslated(-25+deltaX, -(105+deltaY), -deltaZ);
         glTranslatef(25 + deltaX, 70 + deltaY, 0 + deltaZ);
         glColor4f(0, 1, 0, alpha);
         drawCylinder(5, 30);
@@ -99,7 +103,7 @@ void Robots::drawRobot() {
     // Right Elbow
     glPushMatrix();
         glTranslated(-25 + deltaX, 105+deltaY, deltaZ);
-        glRotatef(animValues.elbowAngle, -1, 0, 0);
+        glRotatef(animValues.rightElbowAngle, -1, 0, 0);
         glTranslated(-(-25+deltaX), -(105+deltaY), -deltaZ);
         glTranslatef(-25 + deltaX, 65 + deltaY, 0 + deltaZ);
         glColor4f(0, 0, 1, alpha);
@@ -108,6 +112,10 @@ void Robots::drawRobot() {
 
     // Left Elbow
     glPushMatrix();
+        glTranslated(25 + deltaX, 105 + deltaY, deltaZ);
+        glRotatef(animValues.leftElbowAngle, -1, 0, 0);
+        glTranslatef(-25 + deltaX, -(105 + deltaY), -deltaZ);
+
         glTranslatef(25 + deltaX, 65 + deltaY, 0 + deltaZ);
         glColor4f(0, 0, 0, alpha);
         drawSphere(7);
@@ -115,9 +123,16 @@ void Robots::drawRobot() {
 
     // Right arm
     glPushMatrix();
-        glTranslatef(-25 + deltaX, 105 + deltaY, 0 + deltaZ);
-        glRotatef(animValues.armAngle, -1, 0, 0);
-        glTranslatef(-(-25+deltaX), -(105 + deltaY), -deltaZ);
+        if (animValues.upperRightArmAngle >= 90) {
+            glTranslatef(2.5 + deltaX, 100 + deltaY, 15 + deltaZ);
+            glRotatef(100, -1, 0, -1);
+            glTranslatef(-(-25+deltaX), -(105 + deltaY), -deltaZ);
+
+        } else {
+            glTranslatef(-25 + deltaX, 105 + deltaY, 0 + deltaZ);
+            glRotatef(animValues.rightArmAngle, -1, 0, 0);
+            glTranslatef(-(-25+deltaX), -(105 + deltaY), -deltaZ);
+        }
         glTranslatef(-25 + deltaX, 65 + deltaY, 0 + deltaZ);
 
         glColor4f(0.5, 0.5, 0.5, alpha);
@@ -125,8 +140,35 @@ void Robots::drawRobot() {
         drawCylinder(5, 30);
     glPopMatrix();
 
+    if (drink) {
+        glPushMatrix();
+            if (animValues.upperRightArmAngle >= 90) {
+                glTranslated(5 + deltaX, 145 + deltaY, 5 + deltaZ);
+                glRotatef(40, -1, 0, -1);
+                glTranslatef(-(-25 + deltaX), -(105 + deltaY), -deltaZ);
+            } else {
+                glTranslated(-25 + deltaX, 105 + deltaY, deltaZ);
+                glRotatef(animValues.upperRightArmAngle, -1, 0, 0);
+                glTranslatef(-(-25 + deltaX), -(105 + deltaY), -deltaZ);
+            }
+
+            glTranslated(-25 + deltaX, 55 + deltaY, deltaZ + 30);
+            glScalef(2, 2, 2);
+
+            glColor4f(0.8, 0.93, 1, 0.35);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            drawWineGlass(true);
+            glDisable(GL_BLEND);
+        glPopMatrix();
+    }
+
+
     // Left arm
     glPushMatrix();
+        glTranslated(25 + deltaX, 105+deltaY, deltaZ);
+        glRotatef(animValues.leftElbowAngle, -1, 0, 0);
+        glTranslated(-25+deltaX, -(105+deltaY), -deltaZ);
         glTranslatef(25 + deltaX, 65 + deltaY, 0 + deltaZ);
         glColor4f(0.25, 0.25, 0.25, alpha);
         glRotatef(90, 1, 0, 0);
@@ -275,19 +317,45 @@ void patrolAnim(int index) {
 
 void drinkAnim(int index) {
     Robots *robot = robots[index];
-    int *value = &robot->animValues.drinkValue;
-    cout << " OLD " << robot->animValues.upperArmAngle << endl;
-    if (robot->animValues.upperArmAngle < 90) {
-        robot->animValues.upperArmAngle += 1;
-        robot->animValues.armAngle += 1;
-        robot->animValues.elbowAngle += 1;
-        cout << " NEW " << robot->animValues.upperArmAngle << endl;
+    if (robot->animValues.upperRightArmAngle < 90) {
+        robot->animValues.upperRightArmAngle += 2;
+        robot->animValues.rightArmAngle += 2;
+        robot->animValues.rightElbowAngle += 2;
+        robot->drinking = true;
+        robot->stopDrinking = false;
+        robot->animValues.drinkValue += 2;
+    } else {
+        robot->animValues.drinkValue = 90;
+        robot->drinking = false;
+        glutPostRedisplay();
+        return;
     }
 
     glutPostRedisplay();
     glutTimerFunc(100, drinkAnim, index);
 }
 
+
+void stopDrinkAnim(int index) {
+    Robots *robot = robots[index];
+    if (robot->animValues.upperRightArmAngle > 0) {
+        robot->animValues.upperRightArmAngle -= 2;
+        robot->animValues.rightArmAngle -= 2;
+        robot->animValues.rightElbowAngle -= 2;
+        robot->drinking = false;
+        robot->stopDrinking = true;
+        robot->animValues.drinkValue -= 2;
+    } else {
+        robot->animValues.drinkValue = 0;
+        robot->stopDrinking = false;
+        robot->drinking = false;
+        glutPostRedisplay();
+        return;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(100, stopDrinkAnim, index);
+}
 
 /**
 * Dying robot animation
@@ -323,4 +391,50 @@ void dieAnim(int index) {
 
     glutPostRedisplay();
     glutTimerFunc(100, dieAnim, index);
+}
+
+
+void danceAnim(int index) {
+    Robots* robot = robots[index];
+    int *value = &robot->animValues.danceValue;
+
+    if (* value < 100) {
+        robot->deltaX = rand() % 5 - 5;
+        robot->deltaY = rand() % 10;
+        robot->deltaZ = rand() % 15;
+
+        robot->animValues.upperRightArmAngle = rand() % 90 - 45;
+        robot->animValues.rightArmAngle = robot->animValues.upperRightArmAngle;
+        robot->animValues.rightElbowAngle = robot->animValues.upperRightArmAngle;
+
+        robot->animValues.upperLeftArmAngle = rand() %  90 - 45;
+        robot->animValues.leftArmAngle = robot->animValues.upperLeftArmAngle;
+        robot->animValues.leftElbowAngle = robot->animValues.upperLeftArmAngle;
+
+        robot->turnAngle = rand() % 360;
+        robot->turnStep = 1;
+        robot->turning = true;
+        *value = *value + 1;
+        robot->dancing = true;
+    } else {
+        *value = 0;
+        robot->deltaX = 0;
+        robot->deltaY = 0;
+        robot->deltaZ = 0;
+        robot->dancing = false;
+        robot->animValues.upperRightArmAngle = 0;
+        robot->animValues.rightArmAngle = 0;
+        robot->animValues.rightElbowAngle = 0;
+        robot->animValues.upperLeftArmAngle = 0;
+        robot->animValues.leftArmAngle = 0;
+        robot->animValues.leftElbowAngle = 0;
+        robot->turnAngle = 0;
+        robot->turnStep = 0;
+        robot->turning = false;
+        glutPostRedisplay();
+        return;
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(100, danceAnim, index);
 }
