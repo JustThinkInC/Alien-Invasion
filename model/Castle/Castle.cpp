@@ -45,6 +45,8 @@ void Castle::loadTex() {
     loadTGA("../assets/Castle/brick.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
 }
 
 
@@ -55,7 +57,7 @@ void Castle::loadTex() {
 void Castle::drawGate(double length) {
     double halfLength = length * 0.5;
     glDisable(GL_LIGHTING);
-    glDisable(GL_BLEND);
+   // glDisable(GL_BLEND);
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, texIds[0]);
@@ -68,7 +70,7 @@ void Castle::drawGate(double length) {
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
-    glEnable(GL_BLEND);
+    //glEnable(GL_BLEND);
 }
 
 

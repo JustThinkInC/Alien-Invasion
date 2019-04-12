@@ -40,6 +40,9 @@ void Spaceship::loadTex() {
     loadTGA("../assets/Spaceship/fire.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_REPLACE);
+
 }
 
 
@@ -232,8 +235,8 @@ void Spaceship::drawWingTips() {
     if(texture) {
         glTexCoord2f(0, 0);
         glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LIGHTING);
     }
+    glEnable(GL_LIGHTING);
 }
 
 
