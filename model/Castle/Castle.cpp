@@ -37,12 +37,12 @@ void Castle::loadTex() {
     glGenTextures(2, texIds);
 
     glBindTexture(GL_TEXTURE_2D, texIds[0]);
-    loadTGA("../assets/Castle/gate.tga");
+    loadTGA("assets/Castle/gate.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glBindTexture(GL_TEXTURE_2D, texIds[1]);
-    loadTGA("../assets/Castle/brick.tga");
+    loadTGA("assets/Castle/brick.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -334,6 +334,8 @@ void Castle::openGateAnim(int angle) {
     } else {
         gate.opening = false;
         gate.open = true;
+        glutPostRedisplay();
+        return;
     }
 }
 
@@ -353,6 +355,8 @@ void Castle::closeGateAnim(int angle) {
     } else {
         gate.closed = true;
         gate.closing = false;
+        glutPostRedisplay();
+        return;
     }
 }
 

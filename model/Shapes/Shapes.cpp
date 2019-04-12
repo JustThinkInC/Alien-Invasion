@@ -4,36 +4,11 @@
 
 #include "Shapes.h"
 
-/*
- * Draws a sphere based on the parametric formula
- * x = radius * sin(alpha) * cos(delta)
- * y = radius * sin(alpha) * sin(delta)
- * z = radius * cos(alpha)
- * Where 0 <= alpha <= 360 degrees and 0 <= delta <= 180 degrees
+/**
+ * Draw a sphere of given radius
+ * @brief drawSphere
+ * @param radius
  */
-//void drawSphere(float radius) {
-//    float alphaRadians = 0;
-//    float deltaRadians = 0;
-//    float k = 10;
-//    float x, y, z;  // coordinates of point
-//    glBegin(GL_QUAD_STRIP);
-//    for (int alpha=0; alpha <= 360; alpha+=20) {
-//        alphaRadians = alpha * M_PI / 180.0f;
-//        x = radius * cos(alphaRadians);
-//        y = k;
-//        z = radius * sin(alphaRadians);
-//
-//        glVertex3f(x, 0, z);
-//        glVertex3f(x, y+k, z);
-//
-//        //So rotate about y axis? Z seems to work better
-//        //But both leading no where.
-//    }
-//    glEnd();
-//
-//}
-
-
 void drawSphere(float radius) {
     float alphaRadians = 0;
     float deltaRadians = 0;
@@ -60,84 +35,6 @@ void drawSphere(float radius) {
     }
 }
 
-
-/* Method with stacks and slices
-//void drawSphere(float radius, int stacks, int slices) {
-//    float alphaRadians = 0;
-//    float x, y, z, nx, ny, nz;
-//    //for(int alpha;alpha<=360;alpha++) {
-//    for(int i = 0; i <= stacks; i++) {
-//        //float lat = M_PI / stacks * i - (0.5 * M_PI);
-//        float lat = i * M_PI / stacks;
-//       // float nlat = M_PI / stacks * (i+1) - (0.5 * M_PI);
-//        glBegin(GL_QUAD_STRIP);
-//        for (int j=0; j <= slices; j++) {
-//            float lon = 2 * j * M_PI / slices;
-////            x = cos(lon) * cos(lat);
-////            y = sin(lon) * cos(lat);
-////            z = sin(lat);
-////            nx = cos(lon) * cos(nlat);
-////            ny = sin(lon) * cos(nlat);
-////            nz = sin(nlat);
-////            glNormal3f(nx, ny, nz);
-////            glVertex3f(radius*nx, radius*ny, radius*nz);
-////            glNormal3f(x, y, z);
-////            glVertex3f(radius*x, radius*y, radius*z);
-//              x = cos(lon) * sin(lat);
-//              y = cos(lat);
-//              z = sin(lon) * sin(lat);
-//
-//              glVertex3f(x*radius, y*radius, z*radius);
-//              glVertex3f(radius * x, radius * y, radius * z);
-//        }
-//        glEnd();
-//    }
-//}*/
-
-/*Inefficient parametric form
-//void drawSphere(float radius) {
-//    float x=0, y=0, z=0;
-//    float alphaRadians = 0;
-//    float deltaRadians = 0;
-//    for(int alpha=0;alpha<=360;alpha++) {
-//        alphaRadians = alpha * M_PI /180;
-//        glBegin(GL_LINE_STRIP);
-//
-//        for(int delta=0;delta<=180; delta++) {
-//            deltaRadians = delta * M_PI / 180;
-//            x = radius * sin(alphaRadians) * cos(deltaRadians);
-//            y = radius * sin(deltaRadians);
-//            z = radius * cos(alphaRadians) * cos(deltaRadians);
-//
-//            glVertex3f(x, y, z);
-//            glVertex3f(x, -y, z);
-//            //glVertex3f(-x, -y, -z);
-//        }
-//        glEnd();
-//    }
-//}
-*/
-
-
-//void drawSphere(float radius) {
-//    float thetaRadians = 0, deltaRadians = 0;
-//    float x = 0, y = 0, z = 0;
-//
-//    for (int theta=0; theta<=360;theta++) {
-//        thetaRadians = theta * M_PI / 180;
-//        glBegin(GL_QUAD_STRIP);
-//            for(int phi=0; phi <= 180; phi++) {
-//                deltaRadians = phi * M_PI / 180;
-//
-//                x = radius * sin(thetaRadians) * cos(deltaRadians);
-//                y = radius * sin(deltaRadians);
-//                z = radius * sin(thetaRadians) * cos(deltaRadians);
-//                glVertex3f(x, y, z);
-//
-//           }
-//            glEnd();
-//    }
-//}
 
 /**
  * Draw a cylinder by creating two circles (base and top)

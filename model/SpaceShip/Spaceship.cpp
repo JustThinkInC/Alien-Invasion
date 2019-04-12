@@ -4,7 +4,7 @@
 
 #include "Spaceship.h"
 #include "../Shapes/Shapes.h"
-#include "../../Controller/loadTGA.h"
+#include "../../controller/loadTGA.h"
 
 Spaceship::AnimValues Spaceship::animValues;
 
@@ -31,13 +31,13 @@ void Spaceship::loadTex() {
 
     //Wing tip texture
     glBindTexture(GL_TEXTURE_2D, texIds[0]);
-    loadTGA("../assets/Spaceship/metal.tga");
+    loadTGA("assets/Spaceship/metal.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     //Flames texture
     glBindTexture(GL_TEXTURE_2D, texIds[1]);
-    loadTGA("../assets/Spaceship/fire.tga");
+    loadTGA("assets/Spaceship/fire.tga");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -294,5 +294,7 @@ void Spaceship::takeOffAnim(int value) {
         glutTimerFunc(100, takeOffAnim, animValues.takeOffValue);
     } else {
         animValues.flying = false;
+        glutPostRedisplay();
+        return;
     }
 }

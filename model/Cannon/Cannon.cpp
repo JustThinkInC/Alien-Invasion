@@ -181,6 +181,7 @@ void fireCannonAnim(int index) {
         *value = 0;
 
         glutPostRedisplay();
+        return;
     }
 }
 

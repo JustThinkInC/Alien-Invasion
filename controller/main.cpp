@@ -17,7 +17,7 @@
 #define ROBOT_SCALE 0.4
 
 static float angle = 0.0;  //Rotation angle for viewing
-static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 10;
+static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 20;
 static bool spaceView = false;
 static double minBoundary = -950, maxBoundary = 950;
 static float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
@@ -39,12 +39,12 @@ void drawFloor()
 
     //The floor is made up of several tiny squares on a 1000x1000 grid. Each square has a unit size.
     glBegin(GL_QUADS);
-        for(int i = -1000; i < 1000; i++) {
-            for(int j = -1000;  j < 1000; j++) {
+        for(int i = -1000; i < 1000; i+=10) {
+            for(int j = -1000;  j < 1000; j+=10) {
                 glVertex3f(i, -0.1, j);
-                glVertex3f(i, -0.1, j+1);
-                glVertex3f(i+1, -0.1, j+1);
-                glVertex3f(i+1, -0.1, j);
+                glVertex3f(i, -0.1, j+10);
+                glVertex3f(i+10, -0.1, j+10);
+                glVertex3f(i+10, -0.1, j);
             }
         }
     glEnd();
@@ -62,18 +62,20 @@ void renderSpaceship() {
                            0, 0, 0, lpos[1]};
 
     glPushMatrix();
-    glTranslatef(0, 0, -200);
-    // Stop drawing near the time the boosters turn off
-    if (spaceship->animValues.y < 1.5 * maxBoundary) {
-        spaceship->drawSpaceship();
-        if (spaceship->isFlying()) {
-            // Spotlight
-            float flameLight[] = {200, spaceship->getBodyHeight(), spaceship->getRadius(), 1.0f};
-            float lightDir[] = {-1, -1, 0.0};
-            glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDir);
-            glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
+        glTranslatef(0, 0, -200);
+        // Stop drawing near the time the boosters turn off
+        if (spaceship->animValues.y < 1.5 * maxBoundary) {
+            spaceship->drawSpaceship();
+            if (spaceship->isFlying()) {
+                // Spotlight
+                float flameLight[] = {200, spaceship->getBodyHeight(), spaceship->getRadius(), 1.0f};
+                float lightDir[] = {-1, -1, 0.0};
+                glLightfv(GL_LIGHT2, GL_SPOT_DIRECTION, lightDir);
+                glLightfv(GL_LIGHT2, GL_POSITION, flameLight);
+            }
+        } else {
+            glDisable(GL_LIGHT2);
         }
-    }
     glPopMatrix();
 
     // Only draw shadow & reflection if spaceship in world's space
@@ -198,12 +200,6 @@ void display()
 
     glPushMatrix();
         drawFloor();
-    glPopMatrix();
-
-    glPushMatrix();
-        glTranslatef(-17, 10, 250);
-        glColor4f(0.8, 0.93, 1, 1);
-        drawWineGlass(false);
     glPopMatrix();
 
     glutSwapBuffers();
@@ -353,10 +349,12 @@ void keyboard(unsigned char key, int x, int y) {
             if (!robots[3]->dancing) {
                 glutTimerFunc(100, danceAnim, 3);
             }
+            break;
         case 's':   // Initiate spaceship flight
             if (spaceship->isGrounded()) {
                 glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
             }
+         break;
     }
 
     glutPostRedisplay();
@@ -447,7 +445,7 @@ void initObjects() {
     // Create cannon
     for (int i = 0; i < 4; i++) {
         cannons[i] = new Cannon();
-        cannons[i]->loadMeshFile("../assets/Cannon.off");
+        cannons[i]->loadMeshFile("assets/Cannon.off");
         cannons[i]->cannonX = 0;
         cannons[i]->cannonY = 10;
         cannons[i]->cannonZ = cannons[i]->getLength() + castle->getLength() / 4;
@@ -465,9 +463,9 @@ void initObjects() {
  */
 void initialize()
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);	//Background colour
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   //Background colour
 
-    glEnable(GL_LIGHTING);	               //Enable OpenGL states
+    glEnable(GL_LIGHTING);                 //Enable OpenGL states
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);                  // 1st Robot spotlight
     glEnable(GL_LIGHT2);                  // Spaceship booster flame spotlight

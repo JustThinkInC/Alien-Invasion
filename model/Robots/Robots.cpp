@@ -189,7 +189,6 @@ void Robots::drawRobot() {
         glColor4f(0.46, 0.46, 0.46, alpha);
         drawSphere(18);
     glPopMatrix();
-
 }
 
 
@@ -332,7 +331,7 @@ void drinkAnim(int index) {
     }
 
     glutPostRedisplay();
-    glutTimerFunc(100, drinkAnim, index);
+    glutTimerFunc(50, drinkAnim, index);
 }
 
 
@@ -354,7 +353,7 @@ void stopDrinkAnim(int index) {
     }
 
     glutPostRedisplay();
-    glutTimerFunc(100, stopDrinkAnim, index);
+    glutTimerFunc(50, stopDrinkAnim, index);
 }
 
 /**
@@ -374,7 +373,7 @@ void dieAnim(int index) {
         robot->turning = true;
         robot->turnAngle = 360;
         robot->animValues.turnAroundValue = -20;
-        glutTimerFunc(0, turnAroundAnim, index);
+        glutTimerFunc(100, turnAroundAnim, index);
     } else {
         *value += 1;
     }
