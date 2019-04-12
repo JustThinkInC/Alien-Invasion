@@ -272,12 +272,9 @@ bool collisionCheck(bool down) {
     }
 
     // Collision check with cannon
-    //        glTranslatef(100,  0, -150);
     xCol = (70 <= newX) && (newX <= 130);
     zCol = (cannons[0]->cannonZ + cannons[0]->getLength() - 10 <= newZ) && (newZ <= cannons[0]->cannonZ + 75 + cannons[0]->getLength());
-    //cout << "X " << xCol << " Z " << zCol << " NZ " << newZ <<  " NX " << newX << " CAZ " << cannons[0]->cannonZ << " CAX " << cannons[0]->cannonX << endl;
     if (xCol && zCol) {
-      //  cout << "CANNON " << cannons[0]->getLength() << endl;
         return true;
     }
 
