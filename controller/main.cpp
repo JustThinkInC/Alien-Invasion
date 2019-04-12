@@ -18,7 +18,7 @@
 
 static float angle = 0.0;  //Rotation angle for viewing
 static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 20;
-static bool spaceView = false;
+static bool spaceView = false, fullscreen = false;
 static double minBoundary = -950, maxBoundary = 950;
 static float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
 
@@ -39,8 +39,8 @@ void drawFloor()
 
     //The floor is made up of several tiny squares on a 1000x1000 grid. Each square has a unit size.
     glBegin(GL_QUADS);
-        for(int i = -1000; i < 1000; i+=10) {
-            for(int j = -1000;  j < 1000; j+=10) {
+        for(int i = -1010; i < 1010; i+=10) {
+            for(int j = -1010;  j < 1010; j+=10) {
                 glVertex3f(i, -0.1, j);
                 glVertex3f(i, -0.1, j+10);
                 glVertex3f(i+10, -0.1, j+10);
@@ -50,6 +50,7 @@ void drawFloor()
     glEnd();
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
 }
+
 
 /**
  * Render spaceship and shadow
@@ -116,6 +117,8 @@ void display()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if (spaceView) {
@@ -143,6 +146,8 @@ void display()
             float dir[] = {-1, -1, 0.0};
             glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, dir);
             glLightfv(GL_LIGHT1, GL_POSITION, spotlight);
+        } else {
+            glDisable(GL_LIGHT1);
         }
     glPopMatrix();
 
@@ -318,11 +323,11 @@ void keyboard(unsigned char key, int x, int y) {
             }
             break;
         case 'r':   // Destroy a robot 1 at a time
-            if (!robots[0]->dying && !robots[0]->dead) {
-                glutTimerFunc(100, dieAnim, 0);
-            }
-            else if(!robots[1]->dying && !robots[0]->dead) {
-                glutTimerFunc(100, dieAnim, 1);
+            for (int i = 0; i < 4; i ++) {
+                if (!robots[i]->dying && !robots[i]->dead) {
+                    glutTimerFunc(100, dieAnim, i);
+                    break;
+                }
             }
             break;
         case 'c':   // Fire cannon
@@ -355,6 +360,14 @@ void keyboard(unsigned char key, int x, int y) {
                 glutTimerFunc(100, spaceship->takeOffAnim, spaceship->animValues.takeOffValue);
             }
          break;
+        case 'f':
+            if (!fullscreen) {
+                glutFullScreen();
+                fullscreen = true;
+            } else {
+                fullscreen = false;
+                glutReshapeWindow(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
+            }
     }
 
     glutPostRedisplay();
@@ -378,12 +391,6 @@ void special(int key, int x, int y) {
     else if (key == GLUT_KEY_RIGHT) {
         angle += 5;
         radAngle = angle * M_PI / 180;
-    }
-    else if (key == GLUT_KEY_UP && (glutGetModifiers() == GLUT_ACTIVE_SHIFT)) {
-        eyeY += stepSpeed * cos(radAngle);
-    }
-    else if (key == GLUT_KEY_DOWN && glutGetModifiers() == GLUT_ACTIVE_SHIFT) {
-        eyeY -= stepSpeed * cos(radAngle);
     }
     else if (key == GLUT_KEY_UP && !collisionCheck(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX += stepSpeed * sin(radAngle);
@@ -487,7 +494,6 @@ void initialize()
     glLightfv(GL_LIGHT1, GL_DIFFUSE, yellow);
     glLightfv(GL_LIGHT1, GL_SPECULAR, white);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    glEnable(GL_COLOR_MATERIAL);
     glMaterialfv(GL_FRONT, GL_SPECULAR, white);
     glMaterialf(GL_FRONT, GL_SHININESS, 100);
     glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.0);
@@ -498,7 +504,6 @@ void initialize()
     glLightfv(GL_LIGHT2, GL_DIFFUSE, yellow);
     glLightfv(GL_LIGHT2, GL_SPECULAR, yellow);
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    glEnable(GL_COLOR_MATERIAL);
     glMaterialfv(GL_FRONT, GL_SPECULAR, yellow);
     glMaterialf(GL_FRONT, GL_SHININESS, 100);
     glLightf(GL_LIGHT2, GL_SPOT_CUTOFF, 30.0);
@@ -507,7 +512,6 @@ void initialize()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(90, 1, 5, 5000);
-    //gluPerspective(80.0, 1.0, 100.0, 5000.0);   //Perspective projection from Skybox lab
 
     initObjects();
 
@@ -527,13 +531,12 @@ int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
-    glutInitWindowSize (600, 600);
-    //glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
+    glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
     glutInitWindowPosition(0, 0);
     glutCreateWindow ("Alien Invasion!");   // Assignment title
     initialize();
 
-    //glutFullScreen();
+//    glutFullScreen();
 
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
