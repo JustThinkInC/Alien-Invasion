@@ -97,6 +97,39 @@ void Cannon::drawCannon()
         glEnd();
 	glPopMatrix();
 
+	// First bracket set
+    glPushMatrix();
+        glTranslatef(cannonX-5, 5, cannonZ);
+        glRotatef(90, 0, 1, 0);
+        glScalef(80*0.5, 10*0.5, 3*0.5);
+        glColor3f(1, 0.64, 0);
+        glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(cannonX-5, 10, cannonZ);
+        glRotatef(90, 0, 1, 0);
+        glScalef(40*0.5, 15*0.5, 6*0.5);
+        //glColor3f(1, 0.64, 0);
+        glutSolidCube(1);
+    glPopMatrix();
+
+    // Second bracket set
+    glPushMatrix();
+        glTranslatef(5+cannonX, 5, cannonZ);
+        glRotatef(90, 0, 1, 0);
+        glScalef(80*0.5, 10*0.5, 3*0.5);
+        glColor3f(1, 1, 0);
+        glutSolidCube(1);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(5+cannonX, 10, cannonZ);
+        glRotatef(-90, 0, 1, 0);
+        glScalef(40*0.5, 15*0.5, 6*0.5);
+        glutSolidCube(1);
+    glPopMatrix();
+
     // Cannon ball
     glPushMatrix();
         glTranslatef(cannonBallX, cannonBallY, cannonBallZ);
