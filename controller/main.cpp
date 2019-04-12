@@ -1,6 +1,8 @@
 /**
  * @brief  Initialises OpenGL parameters, displays the scene,
  *         handles collision detection and key presses.
+ *         Ensure the working directory is correct (root of project)
+ *         or the program will not work.
  * @date   March 2019
  * @author George Khella
  */
