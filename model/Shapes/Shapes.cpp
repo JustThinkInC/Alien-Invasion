@@ -1,8 +1,12 @@
-//
-// Created by George on 9/03/2019.
-//
+/**
+ * @author George Khella
+ * @date March 2019
+ * @brief Implementation of shapes:
+ *        sphere, ellipse, cone, pyramid, cylinder, cube
+ */
 
 #include "Shapes.h"
+
 
 /**
  * Draw a sphere of given radius
@@ -204,6 +208,7 @@ void drawCube(float length) {
     glEnd();
 
 }
+
 
 /**
  * Draw an ellipse

@@ -1,6 +1,8 @@
-//
-// Created by George on 6/03/2019.
-//
+/**
+ * @author George K
+ * @date 6/03/2019
+ * @brief Robots class header file
+ */
 
 #ifndef ROBOTS_H
 #define ROBOTS_H

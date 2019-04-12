@@ -1,6 +1,8 @@
-//
-// Created by George on 1/04/2019.
-//
+/**
+ * @author George khella
+ * @date April 2019
+ * @brief Header file for spaceship, contains method prototypes
+ */
 
 #ifndef SPACESHIP_H
 #define SPACESHIP_H

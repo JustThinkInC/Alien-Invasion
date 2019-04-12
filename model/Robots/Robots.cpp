@@ -6,13 +6,16 @@
 
 #include "Robots.h"
 #include "../Shapes/Shapes.h"
+#include "../Wineglass/Wineglass.h"
 #include <math.h>
 #include <GL/freeglut.h>
-#include "../Pottery/Pottery.h"
 using namespace std;
 
 Robots *robots[4];
 
+/**
+ * Draw the robot
+ */
 void Robots::drawRobot() {
     // Rotate in place by step when turning
     // otherwise rotate 180 by y-axis
@@ -313,7 +316,10 @@ void patrolAnim(int index) {
     glutTimerFunc(100, patrolAnim, index);
 }
 
-
+/**
+ * Make robot drink
+ * @param index
+ */
 void drinkAnim(int index) {
     Robots *robot = robots[index];
     if (robot->animValues.upperRightArmAngle < 90) {
@@ -335,6 +341,10 @@ void drinkAnim(int index) {
 }
 
 
+/**
+ * Cease drinking
+ * @param index
+ */
 void stopDrinkAnim(int index) {
     Robots *robot = robots[index];
     if (robot->animValues.upperRightArmAngle > 0) {
@@ -393,6 +403,10 @@ void dieAnim(int index) {
 }
 
 
+/**
+ * Make robot dance
+ * @param index
+ */
 void danceAnim(int index) {
     Robots* robot = robots[index];
     int *value = &robot->animValues.danceValue;

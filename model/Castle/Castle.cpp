@@ -1,3 +1,9 @@
+/**
+ * @author George Khella
+ * @date March 2019
+ * @brief Implementation of a castle with an open/close gate
+ */
+
 #include "Castle.h"
 #include "../Shapes/Shapes.h"
 #include "../../controller/loadTGA.h"

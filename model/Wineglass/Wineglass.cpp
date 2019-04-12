@@ -1,8 +1,11 @@
-//
-// Created by George on 10/04/2019.
-//
+/**
+ * @author George Khella
+ * @date April 2019
+ * @brief Implementation of wine glass
+ */
 
-#include "Pottery.h"
+
+#include "Wineglass.h"
 #include <GL/freeglut.h>
 #include <cmath>
 
@@ -45,6 +48,9 @@ void normal(float x1, float y1, float z1,
 }
 
 
+/**
+ * Draw the wine
+ */
 void drawWine() {
     float wx[wineGlassN], wy[wineGlassN], wz[wineGlassN];
 
@@ -81,7 +87,7 @@ void drawWine() {
 
 /**
  * Draw a wine glass
- * @param fill
+ * @param fill Whether or not to fill the glass
  */
 void drawWineGlass(bool fill) {
     float wx[wineGlassN], wy[wineGlassN], wz[wineGlassN];

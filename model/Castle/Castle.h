@@ -1,10 +1,9 @@
 /**
  * @author George K
  * @date 6/03/2019
- * @brief Header for a simple castle with walls,
- *        pillars and gates. Each has a specified amount
- *        of health
+ * @brief Header for a simple castle with walls, pillars and a gate
  */
+
 #ifndef CASTLE_H
 #define CASTLE_H
 #include <GL/freeglut.h>

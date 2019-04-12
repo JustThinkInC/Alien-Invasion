@@ -1,6 +1,8 @@
-//
-// Created by George on 1/04/2019.
-//
+/**
+ * @author George Khella
+ * @date April 2019
+ * @brief Implementation of spaceship
+ */
 
 #include "Spaceship.h"
 #include "../Shapes/Shapes.h"

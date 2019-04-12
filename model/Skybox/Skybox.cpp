@@ -1,7 +1,3 @@
-//
-// Created by George on 7/04/2019.
-//
-
 #include <GL/gl.h>
 #include "Skybox.h"
 #include "../../controller/loadTGA.h"

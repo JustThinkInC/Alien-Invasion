@@ -1,6 +1,9 @@
-//
-// Created by George on 10/03/2019.
-//
+/**
+ * @brief  Initialises OpenGL parameters, displays the scene,
+ *         handles collision detection and key presses.
+ * @date   March 2019
+ * @author George Khella
+ */
 
 #include "main.h"
 #include "../model/Robots/Robots.h"
@@ -8,19 +11,11 @@
 #include "../model/Cannon/Cannon.h"
 #include "../model/SpaceShip/Spaceship.h"
 #include "../model/Skybox/Skybox.h"
-#include "../model/Pottery/Pottery.h"
+#include "../model/Wineglass/Wineglass.h"
 #include <iostream>
 #include <fstream>
 #include <math.h>
 #include <GL/freeglut.h>
-
-#define ROBOT_SCALE 0.4
-
-static float angle = 0.0;  //Rotation angle for viewing
-static double eyeX = 0, eyeY = 0, eyeZ = 0, lookX = 0, lookY = 0, lookZ = -1, stepSpeed = 20;
-static bool spaceView = false, fullscreen = false;
-static double minBoundary = -950, maxBoundary = 950;
-static float lpos[4] = {-1000., 1000., -1000., 1.0};  //light's position
 
 
 Castle* castle;
@@ -28,6 +23,9 @@ Skybox* skybox;
 Spaceship* spaceship;
 
 
+/**
+ * Draw a floor made of 10x10 quads
+ */
 void drawFloor()
 {
     float white[4] = {1., 1., 1., 1.};
@@ -112,8 +110,7 @@ void renderSpaceship() {
 /**
  * Handle display of all scene objects
  */
-void display()
-{
+void display() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -216,7 +213,7 @@ void display()
  * @param down If the player is moving back
  * @return boolean value of collision
  */
-bool collisionCheck(bool down) {
+bool collision(bool down) {
     static int numRobots = sizeof(robots) / sizeof(robots[0]);
     double radAngle = angle * M_PI / 180;
     double newX = eyeX + stepSpeed * sin(radAngle);
@@ -392,11 +389,11 @@ void special(int key, int x, int y) {
         angle += 5;
         radAngle = angle * M_PI / 180;
     }
-    else if (key == GLUT_KEY_UP && !collisionCheck(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+    else if (key == GLUT_KEY_UP && !collision(false) && (eyeZ > minBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX += stepSpeed * sin(radAngle);
         eyeZ -= stepSpeed * cos(radAngle);
     }
-    else if (key == GLUT_KEY_DOWN && !collisionCheck(true) && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
+    else if (key == GLUT_KEY_DOWN && !collision(true) && (eyeZ < maxBoundary || (eyeX < maxBoundary && eyeX > minBoundary))) {
         eyeX -= stepSpeed * sin(radAngle);
         eyeZ += stepSpeed * cos(radAngle);
     }
@@ -468,8 +465,7 @@ void initObjects() {
 /**
  * Initialize OpenGL parameters
  */
-void initialize()
-{
+void initialize() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);   //Background colour
 
     glEnable(GL_LIGHTING);                 //Enable OpenGL states
@@ -527,8 +523,7 @@ void initialize()
  * @param argv
  * @return
  */
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(glutGet(GLUT_SCREEN_WIDTH), glutGet(GLUT_SCREEN_HEIGHT));
@@ -536,14 +531,13 @@ int main(int argc, char** argv)
     glutCreateWindow ("Alien Invasion!");   // Assignment title
     initialize();
 
-//    glutFullScreen();
-
     glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutSpecialFunc(special);
 
     display();
-
     glutMainLoop();
+
+
     return 0;
 }
